@@ -46,7 +46,6 @@ end
 clear; clc;
 load("config_values.mat")
 plots_dir_path = "plots\";
-channels = [0];
 
 % All channels at each peaking time and temperature
 if length(channels) > 1
@@ -68,24 +67,24 @@ for temp = temperatures
         f = figure("Visible", "off");
         hold on
         for ch = channels
-            plot(dac_inj_values.*conv_factor, data_raw(:, ch+1).*conv_factor);
+            plot(dac_inj_values.*conv_factor, data_raw(:, ch+1));
         end
         hold off
         box on
         grid on
         xlabel('\textbf{Incoming energy [MeV]}');
         ylabel('\textbf{Channel Output [ADU]}');
-        ylim([0 1600])
+        ylim([0 2000])
         xlim([0, 53824]);
         xticks([0:10000:50000])
         xticklabels([0:10:50])
-        yticks([0:200:1600])
+        yticks([0:200:2000])
         set(gcf, 'Color', 'w');
         if length(channels) > 1
-            filename = "fdt_plot_ch" + string(channels(1)) + "-" + string(channels(end)) + "_pt" + string(pt) +  "_" + string(temp) + ".pdf";
+            filename = "fdt_plot_ch" + string(channels(1)) + "-" + string(channels(end)) + "_pt" + string(pt) +  "_" + string(temp) + "C.pdf";
             title("\textbf{Transfer function of channels " + string(channels(1)) + " - " + string(channels(end)) + " at \boldmath$" + string(temp) + "^{\circ}$C and \boldmath$\tau_{p} = $ " + string(pt) + "}");
         else
-            filename = "fdt_plot_ch" + string(channels(1)) + "_pt" + string(pt) +  "_" + string(temp) + ".pdf";
+            filename = "fdt_plot_ch" + string(channels(1)) + "_pt" + string(pt) +  "_" + string(temp) + "C.pdf";
             title("\textbf{Transfer function of channel " + string(channels(1)) + " at \boldmath$" + string(temp) + "^{\circ}$C and \boldmath$\tau_{p} = $ " + string(pt) + "}");
         end
         ax = gca; 
@@ -98,3 +97,35 @@ for temp = temperatures
         disp("SAVED: " + filename);
     end
 end
+
+
+%% Analisi della variazione dell'uscita del canale
+% Analisi del valore dell'uscita del canale in funzione della temperatura
+% mantenendo fisso il canale, il valore dell'energia in ingresso ed il
+% tempo di picco
+
+clear; clc;
+load("config_values.mat")
+colors = distinguishable_colors(length(dac_inj_values), 'w');
+
+ch = 13;
+pt = 6;
+DAC_inj = 400;
+
+channel_output = nan(length(temperatures), length(dac_inj_values));
+temp_counter = 0;
+for temp = temperatures
+    data_raw_table = readtable("fdt_data_computed\means\fdt_allch_means_pt" + string(pt) + "_" + string(temp) + "C.dat");
+    data_raw = table2array(data_raw_table);
+    dac_inj_counter = 0;
+    for dac_inj = dac_inj_values'
+        channel_output(temp_counter+1, dac_inj_counter+1) = data_raw(find(dac_inj_values == dac_inj), ch+1); %#ok<FNDSB> 
+        dac_inj_counter = dac_inj_counter + 1;
+    end
+    temp_counter = temp_counter + 1;
+end
+
+f = figure("Visible", "on");
+colororder([colors(:, 1), colors(:, 2), colors(:, 3)]);
+plot(temperatures, channel_output);
+legend(string(dac_inj_values), "Location", "eastoutside", "NumColumns", 2);
