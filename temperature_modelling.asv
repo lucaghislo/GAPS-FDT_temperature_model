@@ -46,22 +46,14 @@ end
 clear; clc;
 load("config_values.mat")
 plots_dir_path = "plots\";
-channels = [0];
 
 % All channels at each peaking time and temperature
-if length(channels) > 1
-    channels_subfolder_path = plots_dir_path + "channels_" + string(channels(1)) + "-" + string(channels(end)) + "\";
-else
-    channels_subfolder_path = plots_dir_path + "channel_" + string(channels(1)) + "\";
-end
+channels_subfolder_path = plots_dir_path + "channels_" + string(channels(1)) + "-" + string(channels(end) + "\");
 if ~exist(channels_subfolder_path, 'dir')
     mkdir(channels_subfolder_path);
 end
 for temp = temperatures
-    temperatures_subfolder_path = channels_subfolder_path + string(temp)  + "C\";
-    if ~exist(temperatures_subfolder_path, 'dir')
-        mkdir(temperatures_subfolder_path);
-    end
+    temperatures_subfolder_path = channels_subfolder_path + string(channels(1)) + "-" +) string(channels(end + "\");
     for pt = peaking_times
         data_raw_table = readtable("fdt_data_computed\means\fdt_allch_means_pt" + string(pt) + "_" + string(temp) + "C.dat");
         data_raw = table2array(data_raw_table);
@@ -81,20 +73,14 @@ for temp = temperatures
         xticklabels([0:10:50])
         yticks([0:200:1600])
         set(gcf, 'Color', 'w');
-        if length(channels) > 1
-            filename = "fdt_plot_ch" + string(channels(1)) + "-" + string(channels(end)) + "_pt" + string(pt) +  "_" + string(temp) + ".pdf";
-            title("\textbf{Transfer function of channels " + string(channels(1)) + " - " + string(channels(end)) + " at \boldmath$" + string(temp) + "^{\circ}$C and \boldmath$\tau_{p} = $ " + string(pt) + "}");
-        else
-            filename = "fdt_plot_ch" + string(channels(1)) + "_pt" + string(pt) +  "_" + string(temp) + ".pdf";
-            title("\textbf{Transfer function of channel " + string(channels(1)) + " at \boldmath$" + string(temp) + "^{\circ}$C and \boldmath$\tau_{p} = $ " + string(pt) + "}");
-        end
+        title("\textbf{Transfer function of channels " + string(channels(1)) + " - " + string(channels(end)) + " at \boldmath$" + string(temp) + "^{\circ}$C and \boldmath$\tau_{p} = $ " + string(pt) + "}");
         ax = gca; 
         ax.XAxis.FontSize = fontsize; 
         ax.YAxis.FontSize = fontsize;
         ax.Title.FontSize = fontsize + 4;
         f.Position = [0 0 1200 800];
-        
-        exportgraphics(gcf, temperatures_subfolder_path + filename);
+        filename = "fdt_plot_ch" + string(channels(1)) + "-" + string(channels(end)) + "_pt" + string(pt) +  "_" + string(temp) + ".pdf";
+        exportgraphics(gcf, channels_subfolder_path + filename);
         disp("SAVED: " + filename);
     end
 end
