@@ -2,12 +2,8 @@ import numpy as np
 
 # curve-fit() function imported from scipy
 from scipy.optimize import curve_fit
-
 from matplotlib import pyplot as plt
 
-# numpy.linspace with the given arguments
-# produce an array of 40 numbers between 0
-# and 10, both inclusive
 x = [
     0,
     1,
@@ -336,13 +332,6 @@ x = [
     63000,
     64000,
 ]
-
-
-# y is another array which stores 3.45 times
-# the sine of (values in x) * 1.334.
-# The random.normal() draws random sample
-# from normal (Gaussian) distribution to make
-# them scatter across the base line
 y = [
     177.87,
     165.35,
@@ -672,28 +661,133 @@ y = [
     1564.84,
 ]
 
-dx = x[1] - x[0]
-dx = []
-
-for i in range(0, len(x) - 1):
-    dx.append(x[i + 1] - x[i])
-
-# dx.append(1000)
-print(len(dx))
-
-dydx = np.gradient(y, x) * 100
-print(dydx)
+x = [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000,
+    1200,
+    1400,
+    1600,
+    1800,
+    2000,
+    4000,
+    6000,
+    8000,
+    10000,
+    12000,
+    14000,
+    16000,
+    18000,
+    20000,
+    22000,
+    24000,
+    26000,
+    28000,
+    30000,
+    32000,
+    34000,
+    36000,
+    38000,
+    40000,
+    42000,
+    44000,
+    46000,
+    48000,
+    50000,
+    52000,
+    54000,
+    56000,
+    58000,
+    60000,
+    62000,
+    64000,
+]
+y = [
+    120.43,
+    128.84,
+    136.25,
+    141.54,
+    155.14,
+    165.33,
+    172.12,
+    180.2,
+    195.09,
+    199.43,
+    294.57,
+    386.16,
+    469.71,
+    544.62,
+    605.51,
+    663.66,
+    705.65,
+    741.17,
+    771.24,
+    814.68,
+    845.72,
+    867.61,
+    885.02,
+    909.52,
+    1049.4,
+    1142.11,
+    1209.52,
+    1261.94,
+    1306.41,
+    1348.56,
+    1393.61,
+    1426.96,
+    1456.31,
+    1491.08,
+    1522.72,
+    1554.57,
+    1580.57,
+    1607.41,
+    1635.19,
+    1665.88,
+    1687.37,
+    1715.02,
+    1742.42,
+    1765.61,
+    1790.61,
+    1809.74,
+    1835.26,
+    1860.41,
+    1877.74,
+    1898.33,
+    1915,
+    1937.87,
+    1953.14,
+    1967.4,
+    1982.79,
+]
 
 # Test function with coefficients as parameters
-def test(x, m1, m2, m3, m4):
-    return 0.5 * (m1 * x + m2 * np.tanh(m3 * (x - m4)))
+def test(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+    return 0.5 * (
+        m1 * (x + m5) + m2 * np.log(np.cosh(m3 * ((x + m5) - m4)) / np.cosh(m3 * m4))
+    ) + m6 * np.log(np.cosh(m7 * ((x - abs(m8)) - m9)) / np.cosh(m7 * m9))
 
 
 # curve_fit() function takes the test-function
 # x-data and y-data as argument and returns
 # the coefficients a and b in param and
 # the estimated covariance of param in param_cov
-param, param_cov = curve_fit(test, x, dydx)  # 1 / dydx
+param, param_cov = curve_fit(test, y, x)
 
 print("Function coefficients:")
 print(param)
@@ -707,12 +801,22 @@ print(param_cov)
 # the coefficients given by curve-fit() function
 ans = x
 for i in range(0, len(x)):
-    ans[i] = 0.5 * (param[0] * x[i] + param[1] * np.tanh(param[2] * (x[i] - param[3])))
+    ans[i] = 0.5 * (
+        param[0] * (x[i] + param[4])
+        + param[1]
+        * np.log(
+            np.cosh(param[2] * ((x[i] + param[4]) - param[3]))
+            / np.cosh(param[2] * param[3])
+        )
+    ) + param[5] * np.log(
+        np.cosh(param[6] * ((x[i] - abs(param[7])) - param[8]))
+        / np.cosh(param[6] * param[8])
+    )
 
 """Below 4 lines can be un-commented for plotting results
 using matplotlib as shown in the first example. """
 
-plt.plot(x, dydx, "o", color="red", label="data")
-plt.plot(x, ans, "--", color="blue", label="optimized data")
+plt.plot(x, y, color="red", label="data")
+# plt.plot(x, ans, "--", color="blue", label="optimized data")
 plt.legend()
 plt.show()
