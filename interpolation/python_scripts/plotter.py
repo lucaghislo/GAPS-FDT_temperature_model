@@ -781,8 +781,8 @@ y_long = [
     1982.79,
 ]
 
-x = x_short
-y = y_short
+y = x_long
+x = y_long
 
 y = [y_int * 1.8 / 2 ** 11 for y_int in y]
 
@@ -800,9 +800,10 @@ def gaps_fdt(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
 
 
 guess = [41339, 16961, 2.3, 1.3, -0.3, 15000, 5, 0.3, 1]
-popt, pcov = curve_fit(gaps_fdt, y, x, guess, maxfev=10000)
+popt, pcov = curve_fit(gaps_fdt, x, y, guess, maxfev=100000)
 
 print(popt)
+print(pcov)
 
 ans = []
 for i in range(0, len(x)):
@@ -825,7 +826,7 @@ for i in range(0, len(x)):
 
 
 # plt.plot(y, x, color="red", label="data")
-plt.plot(ans, x, color="blue", label="data")
+plt.plot(x, ans, color="blue", label="data")
 plt.show()
 
 print(ans)
