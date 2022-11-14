@@ -9,7 +9,7 @@ import math
 from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 
-x = [
+x_short = [
     0,
     1,
     2,
@@ -337,7 +337,7 @@ x = [
     63000,
     64000,
 ]
-y = [
+y_short = [
     177.87,
     165.35,
     166.04,
@@ -666,7 +666,7 @@ y = [
     1564.84,
 ]
 
-x = [
+x_long = [
     10,
     20,
     30,
@@ -723,7 +723,7 @@ x = [
     62000,
     64000,
 ]
-y = [
+y_long = [
     120.43,
     128.84,
     136.25,
@@ -780,6 +780,9 @@ y = [
     1967.4,
     1982.79,
 ]
+
+x = x_short
+y = y_short
 
 y = [y_int * 1.8 / 2 ** 11 for y_int in y]
 
