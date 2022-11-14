@@ -1,4 +1,9 @@
+from cmath import cosh
 import numpy as np
+import sympy as sy
+from mpmath import *
+import math
+
 
 # curve-fit() function imported from scipy
 from scipy.optimize import curve_fit
@@ -776,34 +781,48 @@ y = [
     1982.79,
 ]
 
-# Test function with coefficients as parameters
-def test(x, m1, m2, m3, m4):
-    return 0.5 * (m1 * x + m2 * np.tanh(m3 * (x - m4)))
+y = [y_int * 1.8 / 2 ** 11 for y_int in y]
 
-# curve_fit() function takes the test-function
-# x-data and y-data as argument and returns
-# the coefficients a and b in param and
-# the estimated covariance of param in param_cov
-param, param_cov = curve_fit(test, x, 1 / dydx)  # 1 / dydx
 
-print("Function coefficients:")
-print(param)
-print("Covariance of coefficients:")
-print(param_cov)
+def gaps_fdt(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+    output = []
+    for i in x:
+        val = 0.5 * (
+            m1 * (i + m5) + m2 * sy.log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
+        ) + m6 * sy.log(cosh(m7 * ((i - abs(m8)) - m9)) / cosh(m7 * m9))
 
-# print(type(param[0]))
-# param = np.int_(param)
+        output.append(float(val))
 
-# ans stores the new y-data according to
-# the coefficients given by curve-fit() function
-ans = x
+    return output
+
+
+guess = [41339, 16961, 2.3, 1.3, -0.3, 15000, 5, 0.3, 1]
+popt, pcov = curve_fit(gaps_fdt, y, x, guess, maxfev=10000)
+
+print(popt)
+
+ans = []
 for i in range(0, len(x)):
-    ans[i] = 0.5 * (param[0] * x[i] + param[1] * np.tanh(param[2] * (x[i] - param[3])))
+    val = (
+        0.5
+        * (
+            popt[0] * (x[i] + popt[4])
+            + popt[1]
+            * sy.log(
+                sy.cosh(popt[2] * ((x[i] + popt[4]) - popt[3]))
+                / sy.cosh(popt[2] * popt[3])
+            )
+        )
+        + popt[5]
+    ) * sy.log(
+        sy.cosh(popt[6] * ((x[i] - abs(popt[7])) - popt[8]))
+        / sy.cosh(popt[6] * popt[8])
+    )
+    ans.append(val)
 
-"""Below 4 lines can be un-commented for plotting results
-using matplotlib as shown in the first example. """
 
-plt.plot(y, x, color="red", label="data")
-plt.plot(ans, "--", color="blue", label="optimized data")
-plt.legend()
+# plt.plot(y, x, color="red", label="data")
+plt.plot(ans, x, color="blue", label="data")
 plt.show()
+
+print(ans)
