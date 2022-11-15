@@ -1,10 +1,16 @@
+from cmath import cosh
 import numpy as np
+import sympy as sy
+from mpmath import *
+import math
+from sklearn.metrics import r2_score
 
-# curve-fit() function imported from scipy
+
+# curve_fit() function imported from scipy
 from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 
-x = [
+x_short = [
     0,
     1,
     2,
@@ -332,7 +338,7 @@ x = [
     63000,
     64000,
 ]
-y = [
+y_short = [
     177.87,
     165.35,
     166.04,
@@ -661,7 +667,7 @@ y = [
     1564.84,
 ]
 
-x = [
+x_long = [
     10,
     20,
     30,
@@ -718,7 +724,7 @@ x = [
     62000,
     64000,
 ]
-y = [
+y_long = [
     120.43,
     128.84,
     136.25,
@@ -776,34 +782,57 @@ y = [
     1982.79,
 ]
 
-# Test function with coefficients as parameters
-def test(x, m1, m2, m3, m4):
-    return 0.5 * (m1 * x + m2 * np.tanh(m3 * (x - m4)))
+y = x_short
+x = y_short
 
-# curve_fit() function takes the test-function
-# x-data and y-data as argument and returns
-# the coefficients a and b in param and
-# the estimated covariance of param in param_cov
-param, param_cov = curve_fit(test, x, 1 / dydx)  # 1 / dydx
+# 0.5*(m1*(m0+m5)+m2*ln(cosh(m3*((m0+m5)-m4))/cosh(m3*m4)))+m6*ln(cosh(m7*((m0-abs(m8))-m9))/cosh(m7*m9));
+# m1 = 41339;
+# m2 = 16961;
+# m3=2.3;
+# m4=1.3;
+# m5=-0.3;
+# m6=10000;
+# m7=5;
+# m8=0.3;
+# m9=1;
+# m10=1
+def gaps_fdt(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+    output = []
+    for i in x:
+        val = 0.5 * (
+            m1 * (i + m5) + m2 * log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
+        ) + m6 * log(cosh(m7 * ((i - abs(m8)) - m9)) / cosh(m7 * m9))
 
-print("Function coefficients:")
-print(param)
-print("Covariance of coefficients:")
-print(param_cov)
+        output.append(float(val))
 
-# print(type(param[0]))
-# param = np.int_(param)
+    return output
 
-# ans stores the new y-data according to
-# the coefficients given by curve-fit() function
-ans = x
-for i in range(0, len(x)):
-    ans[i] = 0.5 * (param[0] * x[i] + param[1] * np.tanh(param[2] * (x[i] - param[3])))
 
-"""Below 4 lines can be un-commented for plotting results
-using matplotlib as shown in the first example. """
+guess = [54800, 15981, 1.7242, 1.6126, -0.46485, 5061.2, 2.6153, 0.4714, 1.101]
+popt, pcov, infodict = curve_fit(gaps_fdt, x, y, guess, maxfev=100000, full_output=1)
 
-plt.plot(y, x, color="red", label="data")
-plt.plot(ans, "--", color="blue", label="optimized data")
+print(popt)
+print(pcov)
+print(infodict)
+
+ans = gaps_fdt(
+    x, popt[0], popt[1], popt[2], popt[3], popt[4], popt[5], popt[6], popt[7], popt[8]
+)
+
+r_squared = r2_score(y, ans)
+
+print("R2: " + str(r_squared))
+
+print(ans)
+
+y = [yi * 0.841 for yi in y]
+ans = [ansi * 0.841 for ansi in ans]
+
+plt.plot(x, y, color="red", label="data")
+plt.plot(
+    x, ans, color="blue", label="model", marker="o", linestyle="none", markersize=1.5
+)
+plt.yscale("log")
+# plt.xscale("log")
 plt.legend()
 plt.show()
