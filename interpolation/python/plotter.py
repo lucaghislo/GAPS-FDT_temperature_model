@@ -4,6 +4,7 @@ import sympy as sy
 from mpmath import *
 import math
 from sklearn.metrics import r2_score
+from matplotlib.pyplot import figure
 
 
 # curve_fit() function imported from scipy
@@ -796,7 +797,19 @@ x = y_short
 # m8=0.3;
 # m9=1;
 # m10=1
-def gaps_fdt(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+def gaps_fdt1(x, m1, m2, m3, m4, m5):
+    output = []
+    for i in x:
+        val = 0.5 * (
+            m1 * (i + m5) + m2 * log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
+        )
+
+        output.append(float(val))
+
+    return output
+
+
+def gaps_fdt2(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
     output = []
     for i in x:
         val = 0.5 * (
@@ -809,13 +822,22 @@ def gaps_fdt(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
 
 
 guess = [54800, 15981, 1.7242, 1.6126, -0.46485, 5061.2, 2.6153, 0.4714, 1.101]
-popt, pcov, infodict = curve_fit(gaps_fdt, x, y, guess, maxfev=100000, full_output=1)
+
+weights = []
+for i in range(0, len(x)):
+    if i < 10:
+        weights.append(1.5)
+    else:
+        weights.append(i)
+
+popt, pcov = curve_fit(
+    gaps_fdt2, x, y, guess, maxfev=100000, sigma=weights, absolute_sigma=True
+)
 
 print(popt)
-print(pcov)
-print(infodict)
+# print(pcov)
 
-ans = gaps_fdt(
+ans = gaps_fdt2(
     x, popt[0], popt[1], popt[2], popt[3], popt[4], popt[5], popt[6], popt[7], popt[8]
 )
 
@@ -823,16 +845,66 @@ r_squared = r2_score(y, ans)
 
 print("R2: " + str(r_squared))
 
-print(ans)
+# print(ans)
 
 y = [yi * 0.841 for yi in y]
 ans = [ansi * 0.841 for ansi in ans]
 
-plt.plot(x, y, color="red", label="data")
+# figure(figsize=(800, 600))
+plt.plot(x, y, color="red", label="Data")
 plt.plot(
-    x, ans, color="blue", label="model", marker="o", linestyle="none", markersize=1.5
+    x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
 )
 plt.yscale("log")
-# plt.xscale("log")
+plt.xscale("log")
+plt.xlabel("Channel Output [ADU]")
+plt.ylabel("Incoming Energy [keV]")
+plt.ylim([1, 10e4])
+plt.title("Incoming Energy vs Channel Output", weight="bold")
+plt.text(
+    1110,
+    2,
+    "m1: "
+    + str(popt[0])
+    + "\nm2: "
+    + str(popt[1])
+    + "\nm3: "
+    + str(popt[2])
+    + "\nm4: "
+    + str(popt[3])
+    + "\nm5: "
+    + str(popt[4])
+    + "\nm6: "
+    + str(popt[5])
+    + "\nm7: "
+    + str(popt[6])
+    + "\nm8: "
+    + str(popt[7])
+    + "\nm9: "
+    + str(popt[8]),
+    bbox=dict(facecolor="white", alpha=0.5),
+)
 plt.legend()
-plt.show()
+# plt.show()
+plt.savefig("interpolation\python\interpolation_weigths.pdf")
+
+print(
+    "Conversione: "
+    + str(
+        abs(
+            gaps_fdt2(
+                [50.0],
+                popt[0],
+                popt[1],
+                popt[2],
+                popt[3],
+                popt[4],
+                popt[5],
+                popt[6],
+                popt[7],
+                popt[8],
+            )[0]
+            * 0.841
+        )
+    )
+)
