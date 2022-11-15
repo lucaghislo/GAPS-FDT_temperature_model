@@ -5,7 +5,7 @@ from mpmath import *
 import math
 
 
-# curve-fit() function imported from scipy
+# curve_fit() function imported from scipy
 from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 
@@ -781,52 +781,65 @@ y_long = [
     1982.79,
 ]
 
-y = x_long
-x = y_long
+y = x_short
+x = y_short
 
-y = [y_int * 1.8 / 2 ** 11 for y_int in y]
+# y = [y_int * (1.8 / (2 ** 11)) for y_int in y]
+
+# x = x[1:326]
+# y = y[1:326]
 
 
 def gaps_fdt(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
     output = []
     for i in x:
         val = 0.5 * (
-            m1 * (i + m5) + m2 * sy.log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
-        ) + m6 * sy.log(cosh(m7 * ((i - abs(m8)) - m9)) / cosh(m7 * m9))
+            m1 * (i + m5) + m2 * log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
+        ) + m6 * log(cosh(m7 * ((i - abs(m8)) - m9)) / cosh(m7 * m9))
 
         output.append(float(val))
 
     return output
 
 
-guess = [41339, 16961, 2.3, 1.3, -0.3, 15000, 5, 0.3, 1]
+def gaps_fdt2(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+    return 0.5 * (
+        m1 * (x + m5) + m2 * log(cosh(m3 * ((x + m5) - m4)) / cosh(m3 * m4))
+    ) + m6 * log(cosh(m7 * ((x - abs(m8)) - m9)) / cosh(m7 * m9))
+
+
+guess = [54800, 15981, 1.7242, 1.6126, -0.46485, 5061.2, 2.6153, 0.4714, 1.101]
 popt, pcov = curve_fit(gaps_fdt, x, y, guess, maxfev=100000)
 
 print(popt)
 print(pcov)
 
-ans = []
-for i in range(0, len(x)):
-    val = (
-        0.5
-        * (
-            popt[0] * (x[i] + popt[4])
-            + popt[1]
-            * sy.log(
-                sy.cosh(popt[2] * ((x[i] + popt[4]) - popt[3]))
-                / sy.cosh(popt[2] * popt[3])
-            )
-        )
-        + popt[5]
-    ) * sy.log(
-        sy.cosh(popt[6] * ((x[i] - abs(popt[7])) - popt[8]))
-        / sy.cosh(popt[6] * popt[8])
-    )
-    ans.append(val)
-
-
-# plt.plot(y, x, color="red", label="data")
-plt.plot(x, ans, color="blue", label="data")
-plt.show()
+ans = gaps_fdt(
+    x,
+    popt[0],
+    popt[1],
+    popt[2],
+    popt[3],
+    popt[4],
+    popt[5],
+    popt[6],
+    popt[7],
+    popt[8],
+)
 
 print(ans)
+
+plt.plot(x, y, color="red", label="data")
+plt.plot(
+    x,
+    ans,
+    color="blue",
+    label="model",
+    marker="point",
+    linestyle="none",
+    markersize="0.5",
+)
+plt.yscale("log")
+plt.xscale("log")
+plt.legend()
+plt.show()
