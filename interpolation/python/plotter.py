@@ -862,7 +862,7 @@ plt.ylabel("Incoming Energy [keV]")
 plt.ylim([1, 10e4])
 plt.title("Incoming Energy vs Channel Output", weight="bold")
 plt.text(
-    1110,
+    1050,
     2,
     "m1: "
     + str(popt[0])
