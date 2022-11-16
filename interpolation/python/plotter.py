@@ -1,17 +1,21 @@
+import math
 from cmath import cosh
+
 import numpy as np
 import sympy as sy
-from mpmath import *
-import math
-from sklearn.metrics import r2_score
+from matplotlib import pyplot as plt
 from matplotlib.pyplot import figure
-
+from mpmath import *
 
 # curve_fit() function imported from scipy
 from scipy.optimize import curve_fit
-from matplotlib import pyplot as plt
+from sklearn.metrics import r2_score
 
-x_short = [
+# Fattore di conversione DAC_inj_code to keV
+coeff_DAC_inj_kev = 0.841
+
+# 326 dati
+x_long = [
     0,
     1,
     2,
@@ -339,7 +343,7 @@ x_short = [
     63000,
     64000,
 ]
-y_short = [
+y_long = [
     177.87,
     165.35,
     166.04,
@@ -668,7 +672,8 @@ y_short = [
     1564.84,
 ]
 
-x_long = [
+# 55 dati
+x_short = [
     10,
     20,
     30,
@@ -725,7 +730,7 @@ x_long = [
     62000,
     64000,
 ]
-y_long = [
+y_short = [
     120.43,
     128.84,
     136.25,
@@ -783,35 +788,22 @@ y_long = [
     1982.79,
 ]
 
-y = x_short
-x = y_short
+# Scelta del dataset
+y = x_short[1:55]
+x = y_short[1:55]
 
+y = [yi * 0.0044 for yi in y]
+x = [xi * (1.8 / 2 ** 11) for xi in x]
+
+# Funzione interpolante la funzione di trasferimento con tangente iperbolica
 # 0.5*(m1*(m0+m5)+m2*ln(cosh(m3*((m0+m5)-m4))/cosh(m3*m4)))+m6*ln(cosh(m7*((m0-abs(m8))-m9))/cosh(m7*m9));
-# m1 = 41339;
-# m2 = 16961;
-# m3=2.3;
-# m4=1.3;
-# m5=-0.3;
-# m6=10000;
-# m7=5;
-# m8=0.3;
-# m9=1;
-# m10=1
-def gaps_fdt1(x, m1, m2, m3, m4, m5):
+# m1 = 41339;  m2 = 16961; m3=2.3; m4=1.3; m5=-0.3; m6=10000; m7=5; m8=0.3; m9=1; m10=1
+# Seconda versione
+# 0.5*(m1*(m0+m5)+m2*ln(cosh(m3*((m0+m5)-m4))/cosh(m3*m4)))+m6*ln(cosh(m7*((m0-abs(m8))-m9))/cosh(m7*m9));
+# m1 = 413; m2 = 1961; m3=2.3; m4=1.3; m5=-0.3; m6=1000; m7=5; m8=0.3; m9=1
+def gaps_fdt_tanh(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
     output = []
-    for i in x:
-        val = 0.5 * (
-            m1 * (i + m5) + m2 * log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
-        )
-
-        output.append(float(val))
-
-    return output
-
-
-def gaps_fdt2(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
-    output = []
-    for i in x:
+    for i in k:
         val = 0.5 * (
             m1 * (i + m5) + m2 * log(cosh(m3 * ((i + m5) - m4)) / cosh(m3 * m4))
         ) + m6 * log(cosh(m7 * ((i - abs(m8)) - m9)) / cosh(m7 * m9))
@@ -821,8 +813,45 @@ def gaps_fdt2(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
     return output
 
 
-guess = [54800, 15981, 1.7242, 1.6126, -0.46485, 5061.2, 2.6153, 0.4714, 1.101]
+# Funzione interpolante la funzione di trasferimento con sigmoide
+# m1*(m0-m5)+(m2+m6)*m0+m2/m4*ln((1+m3*exp(-m4*(m0-abs(m5))))/(1+m3*exp(abs(m4*m5))))+m6/m8*ln((1+m7*exp(-m8*(m0-abs(m9))))/(1+m7*exp(abs(m8*m9))));
+# m1=16; m2=912; m3=39; m4=3.29; m5=0.907; m6=583; m7=28; m8=5.7; m9=0.908
+def gaps_fdt_sigmoide(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+    return (
+        m1 * (x - m5)
+        + (m2 + m6) * x
+        + m2
+        / m4
+        * log((1 + m3 * exp(-m4 * (x - abs(m5)))) / (1 + m3 * exp(abs(m4 * m5))))
+        + m6
+        / m8
+        * log((1 + m7 * exp(-m8 * (x - abs(m9)))) / (1 + m7 * exp(abs(m8 * m9))))
+    )
 
+
+# open file in read mode
+guess = []
+with open(r"interpolation\python\results_weights.txt", "r") as fp:
+    for line in fp:
+        riga = line[:-1]
+        guess.append(float(riga))
+
+print(guess)
+
+# Valori iniziali dei parametri per il fit
+guess_tanh = [2398.2, 729.51, 1.7682, 1.721, -0.32629, 197.43, 2.7122, 0.32706, 1.2274]
+guess_sigmoide = [16, 912, 39, 3.29, 0.907, 583, 28, 5.7, 0.908]
+
+bound_low = []
+bound_up = []
+for h in guess_tanh:
+    bound_low.append(h - abs(h / 10000))
+    bound_up.append(h + abs(h / 10000))
+
+print(bound_low)
+print(bound_up)
+
+# Definizione dei pesi secondo funzione peso
 weights = []
 for i in range(0, len(x)):
     if i < 10:
@@ -830,25 +859,84 @@ for i in range(0, len(x)):
     else:
         weights.append(i)
 
+weights = []
+for i in range(0, len(x)):
+    if i < 255:
+        weights.append(x[i] * 0.1)
+    else:
+        weights.append(x[i])
+
+    if i < 110:
+        weights[i] = weights[i] * 0.1
+
+weights = []
+for i in range(0, len(x)):
+    if i < 8:
+        weights.append(x[i] * 0.00000001)
+    elif i > 24:
+        weights.append(x[i] * 0.00000001)
+    elif i > 12:
+        weights.append(x[i] * 0.0000001)
+    else:
+        weights.append(x[i])
+
+derivata1 = np.gradient(y, x, edge_order=2)
+derivata2 = np.gradient(derivata1, x, edge_order=2)
+derivata3 = np.gradient(derivata2, x, edge_order=2)
+derivata2 = [np.abs(devi) for devi in derivata2]
+weights = derivata2
+weights = x
+
+# Fit della curva
 popt, pcov = curve_fit(
-    gaps_fdt2, x, y, guess, maxfev=100000, sigma=weights, absolute_sigma=True
+    gaps_fdt_tanh,
+    x,
+    y,
+    guess_tanh,
+    maxfev=1000000,
+    bounds=[bound_low, bound_up],
+    # sigma=weights,
+    absolute_sigma=True,
 )
 
+# open file in write mode
+with open(r"interpolation\python\results_weights.txt", "w") as fp:
+    for item in popt:
+        fp.write("%f\n" % item)
+
+print("\nPARAMETRI STIMATI:")
 print(popt)
 # print(pcov)
 
-ans = gaps_fdt2(
+# Calcolo dei valori in ADU attraverso funzione con parametri stimati da interpolazione
+ans = gaps_fdt_tanh(
     x, popt[0], popt[1], popt[2], popt[3], popt[4], popt[5], popt[6], popt[7], popt[8]
 )
 
+# Calcolo R^2
 r_squared = r2_score(y, ans)
-
 print("R2: " + str(r_squared))
 
-# print(ans)
+# Conversione DAC_inj -> keV
+y = [yi * coeff_DAC_inj_kev for yi in y]
+ans = [ansi * coeff_DAC_inj_kev for ansi in ans]
 
-y = [yi * 0.841 for yi in y]
-ans = [ansi * 0.841 for ansi in ans]
+# Calcolo risoluzione FDT e residui interpolazione
+resolution_fdt = []
+resolution_fit = []
+residuals = []
+for i in range(0, len(x)):
+    # resolution_fdt.append((y[i + 1] - y[i]) / (x[i + 1] - x[i]))
+    # resolution_fit.append((ans[i + 1] - ans[i]) / (x[i + 1] - x[i]))
+    residuals.append(abs(y[i] - ans[i]))
+
+print("Somma residui: " + str(sum(residuals)))
+
+# Plot dei residui confrontati con la risoluzione
+# plt.plot(y, resolution_fdt, color="red", marker="o", markersize=1, linestyle="none")
+# plt.plot(y, resolution_fit, color="green", marker="o", markersize=1, linestyle="none")
+# plt.plot(x, residuals, color="blue", marker="o", linestyle="none")
+# plt.show()
 
 # figure(figsize=(800, 600))
 plt.plot(x, y, color="red", label="Data")
@@ -859,52 +947,56 @@ plt.yscale("log")
 plt.xscale("log")
 plt.xlabel("Channel Output [ADU]")
 plt.ylabel("Incoming Energy [keV]")
-plt.ylim([1, 10e4])
+# plt.ylim([1, 10e4])
 plt.title("Incoming Energy vs Channel Output", weight="bold")
-plt.text(
-    1050,
-    2,
-    "m1: "
-    + str(popt[0])
-    + "\nm2: "
-    + str(popt[1])
-    + "\nm3: "
-    + str(popt[2])
-    + "\nm4: "
-    + str(popt[3])
-    + "\nm5: "
-    + str(popt[4])
-    + "\nm6: "
-    + str(popt[5])
-    + "\nm7: "
-    + str(popt[6])
-    + "\nm8: "
-    + str(popt[7])
-    + "\nm9: "
-    + str(popt[8]),
-    bbox=dict(facecolor="white", alpha=0.5),
-)
+# plt.text(
+#     550,
+#     1,
+#     "m1: "
+#     + str(popt[0])
+#     + "\nm2: "
+#     + str(popt[1])
+#     + "\nm3: "
+#     + str(popt[2])
+#     + "\nm4: "
+#     + str(popt[3])
+#     + "\nm5: "
+#     + str(popt[4])
+#     + "\nm6: "
+#     + str(popt[5])
+#     + "\nm7: "
+#     + str(popt[6])
+#     + "\nm8: "
+#     + str(popt[7])
+#     + "\nm9: "
+#     + str(popt[8]),
+#     bbox=dict(facecolor="white", alpha=0.5),
+# )
 plt.legend()
 # plt.show()
-plt.savefig("interpolation\python\interpolation_weigths.pdf")
+plt.savefig("interpolation\python\interpolation_residuals.pdf")
 
-print(
-    "Conversione: "
-    + str(
-        abs(
-            gaps_fdt2(
-                [50.0],
-                popt[0],
-                popt[1],
-                popt[2],
-                popt[3],
-                popt[4],
-                popt[5],
-                popt[6],
-                popt[7],
-                popt[8],
-            )[0]
-            * 0.841
-        )
-    )
-)
+# ADU_to_convert = 60
+# print(
+#     "Conversione: "
+#     + str(ADU_to_convert)
+#     + " ADU = "
+#     + str(
+#         abs(
+#             gaps_fdt_tanh(
+#                 [ADU_to_convert],
+#                 popt[0],
+#                 popt[1],
+#                 popt[2],
+#                 popt[3],
+#                 popt[4],
+#                 popt[5],
+#                 popt[6],
+#                 popt[7],
+#                 popt[8],
+#             )[0]
+#             * coeff_DAC_inj_kev
+#         )
+#     )
+#     + " keV"
+# )
