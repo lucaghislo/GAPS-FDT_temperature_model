@@ -789,8 +789,8 @@ y_short = [
 ]
 
 # Scelta del dataset
-y = x_short[1:55]
-x = y_short[1:55]
+y = x_short[0:55]
+x = y_short[0:55]
 
 y = [yi * 0.0044 for yi in y]
 x = [xi * (1.8 / 2 ** 11) for xi in x]
@@ -816,17 +816,22 @@ def gaps_fdt_tanh(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
 # Funzione interpolante la funzione di trasferimento con sigmoide
 # m1*(m0-m5)+(m2+m6)*m0+m2/m4*ln((1+m3*exp(-m4*(m0-abs(m5))))/(1+m3*exp(abs(m4*m5))))+m6/m8*ln((1+m7*exp(-m8*(m0-abs(m9))))/(1+m7*exp(abs(m8*m9))));
 # m1=16; m2=912; m3=39; m4=3.29; m5=0.907; m6=583; m7=28; m8=5.7; m9=0.908
-def gaps_fdt_sigmoide(x, m1, m2, m3, m4, m5, m6, m7, m8, m9):
-    return (
-        m1 * (x - m5)
-        + (m2 + m6) * x
-        + m2
-        / m4
-        * log((1 + m3 * exp(-m4 * (x - abs(m5)))) / (1 + m3 * exp(abs(m4 * m5))))
-        + m6
-        / m8
-        * log((1 + m7 * exp(-m8 * (x - abs(m9)))) / (1 + m7 * exp(abs(m8 * m9))))
-    )
+def gaps_fdt_sigmoide(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+    output = []
+    for i in k:
+        val = (
+            m1 * (i - m5)
+            + (m2 + m6) * i
+            + m2
+            / m4
+            * log((1 + m3 * exp(-m4 * (i - abs(m5)))) / (1 + m3 * exp(abs(m4 * m5))))
+            + m6
+            / m8
+            * log((1 + m7 * exp(-m8 * (i - abs(m9)))) / (1 + m7 * exp(abs(m8 * m9))))
+        )
+        output.append(float(val))
+
+    return output
 
 
 # open file in read mode
@@ -840,13 +845,13 @@ print(guess)
 
 # Valori iniziali dei parametri per il fit
 guess_tanh = [2398.2, 729.51, 1.7682, 1.721, -0.32629, 197.43, 2.7122, 0.32706, 1.2274]
-guess_sigmoide = [16, 912, 39, 3.29, 0.907, 583, 28, 5.7, 0.908]
+guess_sigmoide = [18.671, 1290.7, 409.86, 3.5362, 0.34582, 1070, 26.358, 5.426, 0.95135]
 
 bound_low = []
 bound_up = []
 for h in guess_tanh:
-    bound_low.append(h - abs(h / 10000))
-    bound_up.append(h + abs(h / 10000))
+    bound_low.append(h - abs(h / 2))
+    bound_up.append(h + abs(h / 2))
 
 print(bound_low)
 print(bound_up)
@@ -889,14 +894,14 @@ weights = x
 
 # Fit della curva
 popt, pcov = curve_fit(
-    gaps_fdt_tanh,
+    gaps_fdt_tanh,  # gaps_fdt_sigmoide,
     x,
     y,
-    guess_tanh,
+    guess_tanh,  # guess_sigmoide,
     maxfev=1000000,
     bounds=[bound_low, bound_up],
     # sigma=weights,
-    absolute_sigma=True,
+    # absolute_sigma=True,
 )
 
 # open file in write mode
@@ -935,23 +940,24 @@ print("Somma residui: " + str(sum(residuals)))
 # Plot dei residui confrontati con la risoluzione
 # plt.plot(y, resolution_fdt, color="red", marker="o", markersize=1, linestyle="none")
 # plt.plot(y, resolution_fit, color="green", marker="o", markersize=1, linestyle="none")
-# plt.plot(x, residuals, color="blue", marker="o", linestyle="none")
+plt.plot(x, residuals, color="blue", marker="o", linestyle="none")
+plt.savefig("interpolation\python\residuals.pdf")
 # plt.show()
 
 # figure(figsize=(800, 600))
-plt.plot(x, y, color="red", label="Data")
-plt.plot(
-    x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
-)
-plt.yscale("log")
-plt.xscale("log")
-plt.xlabel("Channel Output [ADU]")
-plt.ylabel("Incoming Energy [keV]")
-# plt.ylim([1, 10e4])
-plt.title("Incoming Energy vs Channel Output", weight="bold")
+# plt.plot(x, y, color="red", label="Data")
+# plt.plot(
+#     x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
+# )
+# # plt.yscale("log")
+# # plt.xscale("log")
+# plt.xlabel("Channel Output [V]")
+# plt.ylabel("Incoming Energy [fC]")
+# # plt.ylim([1, 10e4])
+# plt.title("Incoming Energy vs Channel Output", weight="bold")
 # plt.text(
-#     550,
-#     1,
+#     0.1,
+#     70,
 #     "m1: "
 #     + str(popt[0])
 #     + "\nm2: "
@@ -969,18 +975,20 @@ plt.title("Incoming Energy vs Channel Output", weight="bold")
 #     + "\nm8: "
 #     + str(popt[7])
 #     + "\nm9: "
-#     + str(popt[8]),
+#     + str(popt[8])
+#     + "\n\nR2: "
+#     + str(r_squared),
 #     bbox=dict(facecolor="white", alpha=0.5),
 # )
-plt.legend()
-# plt.show()
-plt.savefig("interpolation\python\interpolation_residuals.pdf")
+# plt.legend()
+# # plt.show()
+# plt.savefig("interpolation\python\interpolation_residuals.pdf")
 
-# ADU_to_convert = 60
+# ADU_to_convert = 680 * (1.8 / 2 ** 11)
 # print(
 #     "Conversione: "
 #     + str(ADU_to_convert)
-#     + " ADU = "
+#     + " V = "
 #     + str(
 #         abs(
 #             gaps_fdt_tanh(
@@ -995,8 +1003,8 @@ plt.savefig("interpolation\python\interpolation_residuals.pdf")
 #                 popt[7],
 #                 popt[8],
 #             )[0]
-#             * coeff_DAC_inj_kev
+#             * 0.044
 #         )
 #     )
-#     + " keV"
+#     + " fC"
 # )
