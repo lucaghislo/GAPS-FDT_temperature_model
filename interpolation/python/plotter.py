@@ -792,8 +792,8 @@ y_short = [
 y = x_short[0:55]
 x = y_short[0:55]
 
-y = [yi * 0.0044 for yi in y]
-x = [xi * (1.8 / 2 ** 11) for xi in x]
+y = [yi * 0.841 * 0.044 for yi in y]
+x = [xi * (1.8 / (2 ** 11)) for xi in x]
 
 # Funzione interpolante la funzione di trasferimento con tangente iperbolica
 # 0.5*(m1*(m0+m5)+m2*ln(cosh(m3*((m0+m5)-m4))/cosh(m3*m4)))+m6*ln(cosh(m7*((m0-abs(m8))-m9))/cosh(m7*m9));
@@ -923,8 +923,8 @@ r_squared = r2_score(y, ans)
 print("R2: " + str(r_squared))
 
 # Conversione DAC_inj -> keV
-y = [yi * coeff_DAC_inj_kev for yi in y]
-ans = [ansi * coeff_DAC_inj_kev for ansi in ans]
+# y = [yi * coeff_DAC_inj_kev for yi in y]
+# ans = [ansi * coeff_DAC_inj_kev for ansi in ans]
 
 # Calcolo risoluzione FDT e residui interpolazione
 resolution_fdt = []
@@ -940,71 +940,46 @@ print("Somma residui: " + str(sum(residuals)))
 # Plot dei residui confrontati con la risoluzione
 # plt.plot(y, resolution_fdt, color="red", marker="o", markersize=1, linestyle="none")
 # plt.plot(y, resolution_fit, color="green", marker="o", markersize=1, linestyle="none")
-plt.plot(x, residuals, color="blue", marker="o", linestyle="none")
-plt.savefig("interpolation\python\residuals.pdf")
+# plt.plot(x, residuals, color="blue", marker="o", linestyle="none")
+# plt.savefig("residuals.pdf")
 # plt.show()
 
 # figure(figsize=(800, 600))
-# plt.plot(x, y, color="red", label="Data")
-# plt.plot(
-#     x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
-# )
-# # plt.yscale("log")
-# # plt.xscale("log")
-# plt.xlabel("Channel Output [V]")
-# plt.ylabel("Incoming Energy [fC]")
-# # plt.ylim([1, 10e4])
-# plt.title("Incoming Energy vs Channel Output", weight="bold")
-# plt.text(
-#     0.1,
-#     70,
-#     "m1: "
-#     + str(popt[0])
-#     + "\nm2: "
-#     + str(popt[1])
-#     + "\nm3: "
-#     + str(popt[2])
-#     + "\nm4: "
-#     + str(popt[3])
-#     + "\nm5: "
-#     + str(popt[4])
-#     + "\nm6: "
-#     + str(popt[5])
-#     + "\nm7: "
-#     + str(popt[6])
-#     + "\nm8: "
-#     + str(popt[7])
-#     + "\nm9: "
-#     + str(popt[8])
-#     + "\n\nR2: "
-#     + str(r_squared),
-#     bbox=dict(facecolor="white", alpha=0.5),
-# )
-# plt.legend()
-# # plt.show()
-# plt.savefig("interpolation\python\interpolation_residuals.pdf")
-
-# ADU_to_convert = 680 * (1.8 / 2 ** 11)
-# print(
-#     "Conversione: "
-#     + str(ADU_to_convert)
-#     + " V = "
-#     + str(
-#         abs(
-#             gaps_fdt_tanh(
-#                 [ADU_to_convert],
-#                 popt[0],
-#                 popt[1],
-#                 popt[2],
-#                 popt[3],
-#                 popt[4],
-#                 popt[5],
-#                 popt[6],
-#                 popt[7],
-#                 popt[8],
-#             )[0]
-#             * 0.044
-#         )
-#     )
-#     + " fC"
-# )
+plt.plot(x, y, color="red", label="Data")
+plt.plot(
+    x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
+)
+# plt.yscale("log")
+# plt.xscale("log")
+plt.xlabel("Channel Output [V]")
+plt.ylabel("Incoming Energy [fC]")
+# plt.ylim([1, 10e4])
+plt.title("Incoming Energy vs Channel Output", weight="bold")
+plt.text(
+    0.1,
+    600,
+    "m1: "
+    + str(popt[0])
+    + "\nm2: "
+    + str(popt[1])
+    + "\nm3: "
+    + str(popt[2])
+    + "\nm4: "
+    + str(popt[3])
+    + "\nm5: "
+    + str(popt[4])
+    + "\nm6: "
+    + str(popt[5])
+    + "\nm7: "
+    + str(popt[6])
+    + "\nm8: "
+    + str(popt[7])
+    + "\nm9: "
+    + str(popt[8])
+    + "\n\nR2: "
+    + str(r_squared),
+    bbox=dict(facecolor="white", alpha=0.5),
+)
+plt.legend()
+# plt.show()
+plt.savefig("interpolation\python\interpolation_residuals.pdf")
