@@ -14,6 +14,12 @@ from sklearn.metrics import r2_score
 # Fattore di conversione DAC_inj_code to keV
 coeff_DAC_inj_kev = 0.841
 
+# Fattore di conversione keV to fC
+coeff_keV_fC = 0.044
+
+# Fattore di conversione ADU to mV
+coeff_ADU_mV = 1.76 * 10 ** (-3)
+
 # 326 dati
 x_long = [
     0,
@@ -366,7 +372,7 @@ y_long = [
     179.37,
     179.8,
     181.55,
-    181.55,
+    181.56,
     182.6,
     183.4,
     184.14,
@@ -789,11 +795,13 @@ y_short = [
 ]
 
 # Scelta del dataset
-y = x_short[0:55]
-x = y_short[0:55]
+# y = x_short[0:55]
+# x = y_short[0:55]
+y = x_long[1:326]
+x = y_long[1:326]
 
-y = [yi * 0.841 * 0.044 for yi in y]
-x = [xi * (1.8 / (2 ** 11)) for xi in x]
+y = [yi * coeff_DAC_inj_kev * coeff_keV_fC for yi in y]
+x = [xi * coeff_ADU_mV for xi in x]
 
 # Funzione interpolante la funzione di trasferimento con tangente iperbolica
 # 0.5*(m1*(m0+m5)+m2*ln(cosh(m3*((m0+m5)-m4))/cosh(m3*m4)))+m6*ln(cosh(m7*((m0-abs(m8))-m9))/cosh(m7*m9));
@@ -835,13 +843,13 @@ def gaps_fdt_sigmoide(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
 
 
 # open file in read mode
-guess = []
-with open(r"interpolation\python\results_weights.txt", "r") as fp:
-    for line in fp:
-        riga = line[:-1]
-        guess.append(float(riga))
+# guess = []
+# with open(r"interpolation\python\results_coefficients.txt", "r") as fp:
+#     for line in fp:
+#         riga = line[:-1]
+#         guess.append(float(riga))
 
-print(guess)
+# print(guess)
 
 # Valori iniziali dei parametri per il fit
 guess_tanh = [2398.2, 729.51, 1.7682, 1.721, -0.32629, 197.43, 2.7122, 0.32706, 1.2274]
@@ -890,7 +898,7 @@ derivata2 = np.gradient(derivata1, x, edge_order=2)
 derivata3 = np.gradient(derivata2, x, edge_order=2)
 derivata2 = [np.abs(devi) for devi in derivata2]
 weights = derivata2
-weights = x
+weights = [(1 / (xi ** 2)) ** (-1) for xi in x]
 
 # Fit della curva
 popt, pcov = curve_fit(
@@ -900,12 +908,12 @@ popt, pcov = curve_fit(
     guess_tanh,  # guess_sigmoide,
     maxfev=1000000,
     bounds=[bound_low, bound_up],
-    # sigma=weights,
-    # absolute_sigma=True,
+    sigma=weights,
+    absolute_sigma=True,
 )
 
 # open file in write mode
-with open(r"interpolation\python\results_weights.txt", "w") as fp:
+with open(r"interpolation\python\results_coefficients.txt", "w") as fp:
     for item in popt:
         fp.write("%f\n" % item)
 
@@ -930,56 +938,93 @@ print("R2: " + str(r_squared))
 resolution_fdt = []
 resolution_fit = []
 residuals = []
-for i in range(0, len(x)):
-    # resolution_fdt.append((y[i + 1] - y[i]) / (x[i + 1] - x[i]))
-    # resolution_fit.append((ans[i + 1] - ans[i]) / (x[i + 1] - x[i]))
-    residuals.append(abs(y[i] - ans[i]))
+for i in range(0, len(x) - 1):
+    resolution_fdt.append((y[i + 1] - y[i]) / (x[i + 1] - x[i]))
+    resolution_fit.append((ans[i + 1] - ans[i]) / (x[i + 1] - x[i]))
+    residuals.append(((y[i] - ans[i]) / ans[i]) * 100)
 
 print("Somma residui: " + str(sum(residuals)))
 
-# Plot dei residui confrontati con la risoluzione
-# plt.plot(y, resolution_fdt, color="red", marker="o", markersize=1, linestyle="none")
-# plt.plot(y, resolution_fit, color="green", marker="o", markersize=1, linestyle="none")
-# plt.plot(x, residuals, color="blue", marker="o", linestyle="none")
-# plt.savefig("residuals.pdf")
-# plt.show()
+x = [xi / coeff_ADU_mV for xi in x]
+y = [yi / coeff_keV_fC / coeff_DAC_inj_kev for yi in y]
+ans = [ansi / coeff_keV_fC / coeff_DAC_inj_kev for ansi in ans]
+# residuals = [resi / coeff_keV_fC / coeff_DAC_inj_kev for resi in residuals]
+# resolution_fdt = [resi / coeff_keV_fC / coeff_DAC_inj_kev for resi in resolution_fdt]
+# resolution_fit = [resi / coeff_keV_fC / coeff_DAC_inj_kev for resi in resolution_fit]
 
-# figure(figsize=(800, 600))
-plt.plot(x, y, color="red", label="Data")
+# open file in write mode
+with open(r"interpolation\python\results_residuals.txt", "w") as fp:
+    for item in residuals:
+        fp.write("%f\n" % item)
+
+# Plot dei residui confrontati con la risoluzione
+# plt.plot(
+#     x[0 : len(x) - 1],
+#     resolution_fdt,
+#     color="red",
+#     marker="o",
+#     label="Data Resolution",
+#     markersize=1.5,
+# )
+# plt.plot(
+#     x[0 : len(x) - 1],
+#     resolution_fit,
+#     color="green",
+#     marker="o",
+#     label="Fit Resolution",
+#     markersize=1.5,
+# )
 plt.plot(
-    x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
+    x[0 : len(x) - 1],
+    residuals,
+    color="blue",
+    marker="o",
+    label="Residual",
+    markersize=1.5,
 )
+plt.xlabel("Channel Output [ADU]")
+plt.ylabel("[%]")
+plt.title("Residuals vs Channel Output", weight="bold")
+plt.legend()
+plt.savefig("interpolation/python/residuals_scatter_perc.pdf")
+plt.show()
+
+# # figure(figsize=(800, 600))
+# plt.plot(x, y, color="red", label="Data")
+# plt.plot(
+#     x, ans, color="blue", label="Fit", marker="o", linestyle="none", markersize=1.5
+# )
 # plt.yscale("log")
 # plt.xscale("log")
-plt.xlabel("Channel Output [V]")
-plt.ylabel("Incoming Energy [fC]")
-# plt.ylim([1, 10e4])
-plt.title("Incoming Energy vs Channel Output", weight="bold")
-plt.text(
-    0.1,
-    600,
-    "m1: "
-    + str(popt[0])
-    + "\nm2: "
-    + str(popt[1])
-    + "\nm3: "
-    + str(popt[2])
-    + "\nm4: "
-    + str(popt[3])
-    + "\nm5: "
-    + str(popt[4])
-    + "\nm6: "
-    + str(popt[5])
-    + "\nm7: "
-    + str(popt[6])
-    + "\nm8: "
-    + str(popt[7])
-    + "\nm9: "
-    + str(popt[8])
-    + "\n\nR2: "
-    + str(r_squared),
-    bbox=dict(facecolor="white", alpha=0.5),
-)
-plt.legend()
+# plt.xlabel("Channel Output [ADU]")
+# plt.ylabel("Incoming Energy [keV]")
+# # plt.ylim([1, 10e4])
+# plt.title("Incoming Energy vs Channel Output", weight="bold")
+# plt.text(
+#     600,
+#     1,
+#     "m1: "
+#     + str(popt[0])
+#     + "\nm2: "
+#     + str(popt[1])
+#     + "\nm3: "
+#     + str(popt[2])
+#     + "\nm4: "
+#     + str(popt[3])
+#     + "\nm5: "
+#     + str(popt[4])
+#     + "\nm6: "
+#     + str(popt[5])
+#     + "\nm7: "
+#     + str(popt[6])
+#     + "\nm8: "
+#     + str(popt[7])
+#     + "\nm9: "
+#     + str(popt[8])
+#     + "\n\nR2: "
+#     + str(r_squared),
+#     bbox=dict(facecolor="white", alpha=0.5),
+# )
+# plt.legend()
+# plt.savefig("interpolation\python\interpolation_residuals_ADU_keV_log.pdf")
 # plt.show()
-plt.savefig("interpolation\python\interpolation_residuals.pdf")

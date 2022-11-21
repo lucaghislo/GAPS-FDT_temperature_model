@@ -14,6 +14,12 @@ from sklearn.metrics import r2_score
 # Fattore di conversione DAC_inj_code to keV
 coeff_DAC_inj_kev = 0.841
 
+# Fattore di conversione keV to fC
+coeff_keV_fC = 0.044
+
+# Fattore di conversione ADU to mV
+coeff_ADU_mV = 1.76 * 10 ** (-3)
+
 
 def gaps_fdt_tanh(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
     output = []
@@ -29,32 +35,36 @@ def gaps_fdt_tanh(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
 
 # open file in read mode
 coeffs = []
-with open("results_weights.txt", "r") as fp:
+with open("results_coefficients.txt", "r") as fp:
     for line in fp:
         riga = line[:-1]
         coeffs.append(float(riga))
 
 inp = float(input("Channel output [ADU]: "))
 
-ADU_to_convert = inp * (1.8 / 2 ** 11)
+ADU_to_convert = inp * coeff_ADU_mV
 print(
     str(ADU_to_convert)
     + " V = "
     + str(
         abs(
-            gaps_fdt_tanh(
-                [ADU_to_convert],
-                coeffs[0],
-                coeffs[1],
-                coeffs[2],
-                coeffs[3],
-                coeffs[4],
-                coeffs[5],
-                coeffs[6],
-                coeffs[7],
-                coeffs[8],
-            )[0]
+            (
+                gaps_fdt_tanh(
+                    [ADU_to_convert],
+                    coeffs[0],
+                    coeffs[1],
+                    coeffs[2],
+                    coeffs[3],
+                    coeffs[4],
+                    coeffs[5],
+                    coeffs[6],
+                    coeffs[7],
+                    coeffs[8],
+                )[0]
+            )
+            / coeff_keV_fC
         )
+        / coeff_DAC_inj_kev
     )
     + " fC"
 )
