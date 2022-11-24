@@ -21,7 +21,7 @@ coeff_keV_fC = 0.044
 coeff_ADU_mV = 1.76 * 10 ** (-3)
 
 
-def gaps_fdt_tanh(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
+def gaps_fdt_tanh_2(k, m1, m2, m3, m4, m5, m6, m7, m8, m9):
     output = []
     for i in k:
         val = 0.5 * (
@@ -49,7 +49,7 @@ print(
     + str(
         abs(
             (
-                gaps_fdt_tanh(
+                gaps_fdt_tanh_2(
                     [ADU_to_convert],
                     coeffs[0],
                     coeffs[1],
