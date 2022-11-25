@@ -1,9 +1,9 @@
 import os.path
 
 # Extracts long FDT data and feeds to intepolator function in main_caller script
-def get_long_fdt(filepath, ch_number):
+def get_long_fdt(filepath, ch_number, tau):
 
-    data_filepath = os.path.join(filepath, "fdt_allch_pt6.dat")
+    data_filepath = os.path.join(filepath, "fdt_allch_pt" + str(tau) + ".dat")
 
     # Open file in read mode
     f_data = open(data_filepath, "r")
