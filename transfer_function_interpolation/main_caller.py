@@ -8,11 +8,11 @@ from get_long_fdt import *
 # SCRIPT CONFIGURATION
 # Peaking time
 min_tau = 0  # Starting peaking time (min: 0)
-max_tau = 0  # Finishing peaking time (max: 7)
+max_tau = 7  # Finishing peaking time (max: 7)
 
 # Channels
 min_ch = 0  # Starting channel (min: 0)
-max_ch = 1  # Finishing channel (max: 31)
+max_ch = 31  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
@@ -212,7 +212,7 @@ for tau in range(min_tau, max_tau + 1):
         for line in mat_r_squared:
             np.savetxt(f, line, fmt="%.16f")
 
-    print("\nSAVED: " + path_out_r_squared)
+    print("\nSAVED: " + path_out_r_squared + "\n")
 
 
 # Save X data (real X data)
