@@ -65,16 +65,6 @@ def interpolate_fdt(
         absolute_sigma=True,
     )
 
-    # write estimated coefficients to file
-    with open(
-        r"transfer_function_interpolation\output\estimated_coefficients_"
-        + str(num_parameters)
-        + r"_params.txt",
-        "w",
-    ) as fp:
-        for item in popt:
-            fp.write("%f\n" % item)
-
     # Estimate y given x using estimated coefficients
     ans = interpolating_function(x_data, *popt)
 
@@ -85,6 +75,16 @@ def interpolate_fdt(
     # Make directory to store output files
     if not os.path.exists(folder_path):
         os.mkdir(folder_path)
+
+    # Write estimated coefficients to file
+    path_out = os.path.join(
+        folder_path,
+        prefix + "_estimated_coefficients_" + str(num_parameters) + "_params.txt",
+    )
+    with open(path_out, "w") as fp:
+        fp.write("Estimated coefficients\n")
+        for item in popt:
+            fp.write("%f\n" % item)
 
     # Plot interpolated data [fC vs V]
     plt.clf()
