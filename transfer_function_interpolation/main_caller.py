@@ -36,6 +36,7 @@ else:
 main_folder_path = os.path.join(main_path, folder_name)
 
 all_x_data = []
+xdata_flag = False
 
 for tau in range(min_tau, max_tau + 1):
 
@@ -99,8 +100,9 @@ for tau in range(min_tau, max_tau + 1):
         all_residuals_percent.append(residuals_percent)
         all_r_squared.append(r_squared)
 
-        if ch_number == min_ch:
+        if not xdata_flag:
             all_x_data.append(x_data)
+            xdata_flag = True
 
     # Save estimated parameters
     # Column: parameter
