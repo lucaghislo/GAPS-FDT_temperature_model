@@ -11,8 +11,8 @@ min_tau = 0  # Starting peaking time (min: 0)
 max_tau = 7  # Finishing peaking time (max: 7)
 
 # Channels
-min_ch = 0  # Starting channel for evaluation (min: 0)
-max_ch = 31  # Finishing channel for evaluation (max: 31)
+min_ch = 0  # Starting channel (min: 0)
+max_ch = 31  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
