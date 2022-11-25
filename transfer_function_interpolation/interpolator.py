@@ -82,9 +82,12 @@ def interpolate_fdt(
         prefix + "_estimated_coefficients_" + str(num_parameters) + "_params.txt",
     )
     with open(path_out, "w") as fp:
-        fp.write("Estimated coefficients\n")
+        counter = 0
         for item in popt:
-            fp.write("%f\n" % item)
+            fp.write(f"m{counter + 1}: {item}\n")
+            counter = counter + 1
+
+        fp.write(f"\nR2: {r_squared}\n")
 
     # Plot interpolated data [fC vs V]
     plt.clf()
