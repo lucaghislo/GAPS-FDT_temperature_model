@@ -1,5 +1,8 @@
+import math
 from cmath import cosh
-from mpmath import log
+import numpy as np
+import sympy as sy
+from mpmath import *
 
 
 def gaps_fdt_tanh_8_params(x, m1, m2, m3, m4, m5, m6, m7, m8):

@@ -1,4 +1,5 @@
 import math
+import os
 from cmath import cosh
 import numpy as np
 import sympy as sy
@@ -23,8 +24,16 @@ coeff_ADU_mV = 1.76 * 10 ** (-3)
 # interpolating_function: function to interpolate (defined in file)
 # initial_guess: initial values for parameter estimation (1D array)
 # num_parameters: number of parameters to estimate (scalar)
+# folder_path: file path to main output folder
+# prefix: file name prefix for all files
 def interpolate_fdt(
-    x_data, y_data, interpolating_function, initial_guess, num_parameters
+    x_data,
+    y_data,
+    interpolating_function,
+    initial_guess,
+    num_parameters,
+    folder_path,
+    prefix,
 ):
 
     # Conversion DAC_inj_code to keV to fC
@@ -73,7 +82,12 @@ def interpolate_fdt(
     r_squared = r2_score(y_data, ans)
     print("R2: " + str(r_squared))
 
+    # Make directory to store output files
+    if not os.path.exists(folder_path):
+        os.mkdir(folder_path)
+
     # Plot interpolated data [fC vs V]
+    plt.clf()
     plt.plot(x_data, y_data, color="red", label="Data")
     plt.plot(
         x_data,
@@ -91,130 +105,137 @@ def interpolate_fdt(
     plt.title("Input Capacitance vs Channel Output", weight="bold")
     plt.legend()
     plt.grid(True)
-    plt.savefig(
-        "transfer_function_interpolation\output\interpolation_tanh_"
+    path_out = os.path.join(
+        folder_path,
+        prefix
+        + "_interpolation_tanh_"
         + str(num_parameters)
-        + "_params_fC_V_log-log.pdf"
+        + "_params_fC_V_log-log.pdf",
     )
+    plt.savefig(path_out)
+
     plt.yscale("linear")
     plt.xscale("linear")
     plt.legend()
     plt.grid(True)
-    plt.savefig(
-        "transfer_function_interpolation\output\interpolation_tanh_"
+    path_out = os.path.join(
+        folder_path,
+        prefix
+        + "_interpolation_tanh_"
         + str(num_parameters)
-        + "_params_fC_V_lin-lin.pdf"
+        + "_params_fC_V_lin-lin.pdf",
     )
+    plt.savefig(path_out)
 
-    # Plot interpolated data [keV vs ADU]
-    x_data = [xi / coeff_ADU_mV for xi in x_data]
-    y_data = [yi / coeff_keV_fC for yi in y_data]
-    ans = [ansi / coeff_keV_fC for ansi in ans]
+    # # Plot interpolated data [keV vs ADU]
+    # x_data = [xi / coeff_ADU_mV for xi in x_data]
+    # y_data = [yi / coeff_keV_fC for yi in y_data]
+    # ans = [ansi / coeff_keV_fC for ansi in ans]
 
-    plt.clf()
-    plt.plot(x_data, y_data, color="red", label="Data")
-    plt.plot(
-        x_data,
-        ans,
-        color="blue",
-        label="Fit",
-        marker="o",
-        linestyle="none",
-        markersize=1.5,
-    )
-    plt.yscale("log")
-    plt.xscale("log")
-    plt.xlabel("Channel Output [ADU]")
-    plt.ylabel("Incoming Energy [keV]")
-    plt.title("Incoming Energy vs Channel Output", weight="bold")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig(
-        "transfer_function_interpolation\output\interpolation_tanh_"
-        + str(num_parameters)
-        + "_params_keV_ADU_log-log.pdf"
-    )
-    plt.yscale("linear")
-    plt.xscale("linear")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig(
-        "transfer_function_interpolation\output\interpolation_tanh_"
-        + str(num_parameters)
-        + "_params_keV_ADU_lin-lin.pdf"
-    )
+    # plt.clf()
+    # plt.plot(x_data, y_data, color="red", label="Data")
+    # plt.plot(
+    #     x_data,
+    #     ans,
+    #     color="blue",
+    #     label="Fit",
+    #     marker="o",
+    #     linestyle="none",
+    #     markersize=1.5,
+    # )
+    # plt.yscale("log")
+    # plt.xscale("log")
+    # plt.xlabel("Channel Output [ADU]")
+    # plt.ylabel("Incoming Energy [keV]")
+    # plt.title("Incoming Energy vs Channel Output", weight="bold")
+    # plt.legend()
+    # plt.grid(True)
+    # plt.savefig(
+    #     "transfer_function_interpolation\output\interpolation_tanh_"
+    #     + str(num_parameters)
+    #     + "_params_keV_ADU_log-log.pdf"
+    # )
+    # plt.yscale("linear")
+    # plt.xscale("linear")
+    # plt.legend()
+    # plt.grid(True)
+    # plt.savefig(
+    #     "transfer_function_interpolation\output\interpolation_tanh_"
+    #     + str(num_parameters)
+    #     + "_params_keV_ADU_lin-lin.pdf"
+    # )
 
-    # Residual evaluation and comparison with transfer function resolution
-    resolution = []
-    residuals = []
-    resolution_data = []
-    residuals_percent = []
-    for i in range(1, len(x_data) - 1):
-        resolution_data.append(
-            (y_data[i + 1] - y_data[i]) / (x_data[i + 1] - x_data[i])
-        )
-        resolution.append((ans[i + 1] - ans[i]) / (x_data[i + 1] - x_data[i]))
-        res = abs(y_data[i] - ans[i])
-        residuals.append(res)
-        residuals_percent.append((res / y_data[i]) * 100)
+    # # Residual evaluation and comparison with transfer function resolution
+    # resolution = []
+    # residuals = []
+    # resolution_data = []
+    # residuals_percent = []
+    # for i in range(1, len(x_data) - 1):
+    #     resolution_data.append(
+    #         (y_data[i + 1] - y_data[i]) / (x_data[i + 1] - x_data[i])
+    #     )
+    #     resolution.append((ans[i + 1] - ans[i]) / (x_data[i + 1] - x_data[i]))
+    #     res = abs(y_data[i] - ans[i])
+    #     residuals.append(res)
+    #     residuals_percent.append((res / y_data[i]) * 100)
 
-    # Plot residuals compared to transfer function resolution
-    plt.clf()
-    plt.plot(
-        y_data[1 : len(y_data) - 1],
-        resolution,
-        label="Resolution",
-        color="green",
-        marker="o",
-        markersize=1.5,
-    )
-    plt.plot(
-        y_data[1 : len(y_data) - 1],
-        residuals,
-        label="Residuals",
-        color="blue",
-        marker="o",
-        markersize=1.5,
-    )
-    plt.xlabel("Incoming Energy [keV]")
-    plt.ylabel("Resolution [keV/ADU]")
-    plt.title("Resolution and Residuals vs Incoming Energy", weight="bold")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig(
-        r"transfer_function_interpolation\output\residuals_tanh_"
-        + str(num_parameters)
-        + r"_params_lin-lin.pdf"
-    )
-    plt.yscale("log")
-    plt.xscale("log")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig(
-        r"transfer_function_interpolation\output\residuals_tanh_"
-        + str(num_parameters)
-        + r"_params_log-log.pdf"
-    )
+    # # Plot residuals compared to transfer function resolution
+    # plt.clf()
+    # plt.plot(
+    #     y_data[1 : len(y_data) - 1],
+    #     resolution,
+    #     label="Resolution",
+    #     color="green",
+    #     marker="o",
+    #     markersize=1.5,
+    # )
+    # plt.plot(
+    #     y_data[1 : len(y_data) - 1],
+    #     residuals,
+    #     label="Residuals",
+    #     color="blue",
+    #     marker="o",
+    #     markersize=1.5,
+    # )
+    # plt.xlabel("Incoming Energy [keV]")
+    # plt.ylabel("Resolution [keV/ADU]")
+    # plt.title("Resolution and Residuals vs Incoming Energy", weight="bold")
+    # plt.legend()
+    # plt.grid(True)
+    # plt.savefig(
+    #     r"transfer_function_interpolation\output\residuals_tanh_"
+    #     + str(num_parameters)
+    #     + r"_params_lin-lin.pdf"
+    # )
+    # plt.yscale("log")
+    # plt.xscale("log")
+    # plt.legend()
+    # plt.grid(True)
+    # plt.savefig(
+    #     r"transfer_function_interpolation\output\residuals_tanh_"
+    #     + str(num_parameters)
+    #     + r"_params_log-log.pdf"
+    # )
 
-    # Plot residuals as percentage
-    plt.clf()
-    plt.plot(
-        y_data[1 : len(y_data) - 1],
-        residuals_percent[0 : len(y_data) - 1],
-        label="Residuals",
-        color="blue",
-        marker="o",
-        markersize=1.5,
-    )
-    plt.xlabel("Incoming Energy [keV]")
-    plt.ylabel("Residuals [%]")
-    plt.title("Residuals vs Incoming Energy", weight="bold")
-    plt.xscale("log")
-    # plt.ylim([0, 100])
-    plt.grid(True)
-    plt.savefig(
-        r"transfer_function_interpolation\output\residuals_tanh_"
-        + str(num_parameters)
-        + r"_params_percent.pdf"
-    )
-    # plt.show()
+    # # Plot residuals as percentage
+    # plt.clf()
+    # plt.plot(
+    #     y_data[1 : len(y_data) - 1],
+    #     residuals_percent[0 : len(y_data) - 1],
+    #     label="Residuals",
+    #     color="blue",
+    #     marker="o",
+    #     markersize=1.5,
+    # )
+    # plt.xlabel("Incoming Energy [keV]")
+    # plt.ylabel("Residuals [%]")
+    # plt.title("Residuals vs Incoming Energy", weight="bold")
+    # plt.xscale("log")
+    # # plt.ylim([0, 100])
+    # plt.grid(True)
+    # plt.savefig(
+    #     r"transfer_function_interpolation\output\residuals_tanh_"
+    #     + str(num_parameters)
+    #     + r"_params_percent.pdf"
+    # )
+    # # plt.show()
