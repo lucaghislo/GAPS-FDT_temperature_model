@@ -214,7 +214,7 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "residuals_tanh_" + str(num_parameters) + "_params_lin-lin.pdf",
+        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_lin-lin.pdf",
     )
     plt.savefig(path_out)
 
@@ -225,7 +225,7 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "residuals_tanh_" + str(num_parameters) + "_params_log-log.pdf",
+        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_log-log.pdf",
     )
     plt.savefig(path_out)
 
@@ -247,7 +247,7 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "residuals_tanh_" + str(num_parameters) + "_params_percent.pdf",
+        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_percent.pdf",
     )
     plt.savefig(path_out)
 
