@@ -8,14 +8,20 @@ from get_long_fdt import *
 # SCRIPT CONFIGURATION
 # Peaking time
 min_tau = 0  # Starting peaking time (min: 0)
-max_tau = 7  # Finishing peaking time (max: 7)
+max_tau = 0  # Finishing peaking time (max: 7)
 
 # Channels
 min_ch = 0  # Starting channel (min: 0)
-max_ch = 31  # Finishing channel (max: 31)
+max_ch = 0  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
+
+# Output folder path
+main_path = "transfer_function_interpolation\output"
+
+# Output folder name
+folder_name = "all-ch_all-pts_long-fdt_module_238_-40C"
 
 if n_params == 5:
     fdt = t5.gaps_fdt_tanh_5_params
@@ -34,9 +40,8 @@ for tau in range(min_tau, max_tau + 1):
         )
 
         prefix = "ch_" + str(ch_number) + "_tau_" + str(tau)
-        folder_name = "all-ch_all-pts_long-fdt_module_238_-40C"
         folder_path = os.path.join(
-            "transfer_function_interpolation\output",
+            main_path,
             folder_name,
             prefix + "_" + str(n_params) + "_params",
         )
