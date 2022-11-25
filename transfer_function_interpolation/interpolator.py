@@ -70,7 +70,7 @@ def interpolate_fdt(
 
     # R2
     r_squared = r2_score(y_data, ans)
-    print("R2: " + str(r_squared))
+    print(prefix + " -> R2: " + str(r_squared))
 
     # Make directory to store output files
     if not os.path.exists(folder_path):
@@ -257,3 +257,15 @@ def interpolate_fdt(
     plt.savefig(path_out)
 
     # plt.show()
+
+    return (
+        x_data,
+        y_data,
+        ans,
+        popt,
+        resolution,
+        resolution_data,
+        residuals,
+        residuals_percent,
+        r_squared,
+    )
