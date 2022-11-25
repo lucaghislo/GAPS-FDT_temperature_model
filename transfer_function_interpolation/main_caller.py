@@ -19,13 +19,18 @@ for ch_number in range(0, 1):
     ch_data = ch_data[1 : len(ch_data)]
     dac_inj = dac_inj[1 : len(dac_inj)]
 
+    # Config
+    fdt = t9.gaps_fdt_tanh_9_params
+    guess = t9.weights_fdt_tanh_9_params
+    n_params = 9
+
     # Interpolator function call
     interpolate_fdt(
         ch_data,
         dac_inj,
-        t8.gaps_fdt_tanh_8_params,
-        t8.weights_fdt_tanh_8_params,
-        8,
+        fdt,
+        guess,
+        n_params,
         folder_path,
         prefix,
     )
