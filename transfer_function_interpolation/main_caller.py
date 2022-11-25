@@ -16,6 +16,9 @@ for ch_number in range(0, 1):
         "transfer_function_interpolation\output\module_channels_analysis", prefix
     )
 
+    ch_data = ch_data[1 : len(ch_data)]
+    dac_inj = dac_inj[1 : len(dac_inj)]
+
     # Interpolator function call
     interpolate_fdt(
         ch_data,

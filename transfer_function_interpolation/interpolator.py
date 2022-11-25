@@ -154,7 +154,7 @@ def interpolate_fdt(
     path_out = os.path.join(
         folder_path,
         prefix
-        + "interpolation_tanh_"
+        + "_interpolation_tanh_"
         + str(num_parameters)
         + "_params_keV_ADU_log-log.pdf",
     )
@@ -168,7 +168,7 @@ def interpolate_fdt(
     path_out = os.path.join(
         folder_path,
         prefix
-        + "interpolation_tanh_"
+        + "_interpolation_tanh_"
         + str(num_parameters)
         + "_params_keV_ADU_lin-lin.pdf",
     )
@@ -242,7 +242,9 @@ def interpolate_fdt(
     plt.xlabel("Incoming Energy [keV]")
     plt.ylabel("Residuals [%]")
     plt.title("Residuals vs Incoming Energy", weight="bold")
+    plt.yscale("log")
     plt.xscale("log")
+    plt.legend()
     # plt.ylim([0, 100])
     plt.grid(True)
     path_out = os.path.join(
