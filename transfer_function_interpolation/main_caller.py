@@ -6,7 +6,7 @@ from fdt_formulas import tanh_9_params as t9
 from get_long_fdt import *
 
 
-for ch_number in range(0, 1):
+for ch_number in range(0, 32):
     [dac_inj, ch_data] = get_long_fdt(
         "transfer_function_interpolation\input\module_long_fdts", ch_number
     )
@@ -20,9 +20,9 @@ for ch_number in range(0, 1):
     dac_inj = dac_inj[1 : len(dac_inj)]
 
     # Config
-    fdt = t9.gaps_fdt_tanh_9_params
-    guess = t9.weights_fdt_tanh_9_params
-    n_params = 9
+    fdt = t8.gaps_fdt_tanh_8_params
+    guess = t8.weights_fdt_tanh_8_params
+    n_params = 8
 
     # Interpolator function call
     interpolate_fdt(
