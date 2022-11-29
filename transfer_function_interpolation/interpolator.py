@@ -34,7 +34,14 @@ def interpolate_fdt(
     num_parameters,
     folder_path,
     prefix,
+    temperature,
 ):
+
+    temp_flag = True
+
+    # Check temperature
+    if temperature == None:
+        temp_flag = False
 
     # Conversion DAC_inj_code to keV to fC
     y_data = [yi * coeff_DAC_inj_kev for yi in y_data]
@@ -49,10 +56,28 @@ def interpolate_fdt(
     # Bounds definition
     bound_low = []
     bound_up = []
+    param_sigmas = [
+        37.76040062999,
+        146.633098328572,
+        0.105811658364116,
+        0.0499149434652002,
+        0.0455252119725348,
+        78.9675506871334,
+        0.136764092951559,
+        0.0566284852328005,
+    ]
 
+    # General bounds
     for h in initial_guess:
         bound_low.append(h - abs(h / 2))
         bound_up.append(h + abs(h / 2))
+
+    # Bounds given from sigmas
+    # h_count = 0
+    # for h in initial_guess:
+    #     bound_low.append(h - param_sigmas[h_count] * 10)
+    #     bound_up.append(h + param_sigmas[h_count] * 10)
+    #     h_count = h_count + 1
 
     # Fit della curva
     popt, pcov = curve_fit(
@@ -106,7 +131,16 @@ def interpolate_fdt(
     plt.xscale("log")
     plt.xlabel("Channel Output [V]")
     plt.ylabel("Input Capacitance [fC]")
-    plt.title("Input Capacitance vs Channel Output", weight="bold")
+    if temp_flag:
+        plt.title(
+            "Input Capacitance vs Channel Output at T = " + str(temperature) + " °C",
+            weight="bold",
+        )
+    else:
+        plt.title(
+            "Input Capacitance vs Channel Output",
+            weight="bold",
+        )
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
@@ -152,7 +186,16 @@ def interpolate_fdt(
     plt.xscale("log")
     plt.xlabel("Channel Output [ADU]")
     plt.ylabel("Incoming Energy [keV]")
-    plt.title("Incoming Energy vs Channel Output", weight="bold")
+    if temp_flag:
+        plt.title(
+            "Incoming Energy vs Channel Output at T = " + str(temperature) + " °C",
+            weight="bold",
+        )
+    else:
+        plt.title(
+            "Incoming Energy vs Channel Output",
+            weight="bold",
+        )
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
@@ -213,7 +256,18 @@ def interpolate_fdt(
     )
     plt.xlabel("Incoming Energy [keV]")
     plt.ylabel("Resolution [keV/ADU]")
-    plt.title("Resolution and Residuals vs Incoming Energy", weight="bold")
+    if temp_flag:
+        plt.title(
+            "Resolution and Residuals vs Incoming Energy at T = "
+            + str(temperature)
+            + " °C",
+            weight="bold",
+        )
+    else:
+        plt.title(
+            "Resolution and Residuals vs Incoming Energy",
+            weight="bold",
+        )
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
@@ -233,6 +287,17 @@ def interpolate_fdt(
     )
     plt.savefig(path_out)
 
+    # Lin-log scale
+    plt.yscale("log")
+    plt.xscale("linear")
+    plt.legend()
+    plt.grid(True)
+    path_out = os.path.join(
+        folder_path,
+        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_lin-log.pdf",
+    )
+    plt.savefig(path_out)
+
     # Plot residuals as percentage
     plt.clf()
     plt.plot(
@@ -245,7 +310,16 @@ def interpolate_fdt(
     )
     plt.xlabel("Incoming Energy [keV]")
     plt.ylabel("Residuals [%]")
-    plt.title("Residuals vs Incoming Energy", weight="bold")
+    if temp_flag:
+        plt.title(
+            "Residuals vs Incoming Energy at T = " + str(temperature) + " °C",
+            weight="bold",
+        )
+    else:
+        plt.title(
+            "Residuals vs Incoming Energy",
+            weight="bold",
+        )
     plt.yscale("log")
     plt.xscale("log")
     plt.legend()
