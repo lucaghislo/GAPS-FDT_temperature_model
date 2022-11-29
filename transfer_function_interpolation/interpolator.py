@@ -288,8 +288,8 @@ def interpolate_fdt(
     plt.savefig(path_out)
 
     # Lin-log scale
-    plt.yscale("log")
-    plt.xscale("linear")
+    plt.yscale("linear")
+    plt.xscale("log")
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
