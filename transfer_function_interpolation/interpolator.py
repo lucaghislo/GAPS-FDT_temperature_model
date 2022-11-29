@@ -39,6 +39,7 @@ def interpolate_fdt(
     # Conversion DAC_inj_code to keV to fC
     y_data = [yi * coeff_DAC_inj_kev for yi in y_data]
     y_data = [yi * coeff_keV_fC for yi in y_data]
+
     # Conversion ADU to V
     x_data = [xi * coeff_ADU_mV for xi in x_data]
 

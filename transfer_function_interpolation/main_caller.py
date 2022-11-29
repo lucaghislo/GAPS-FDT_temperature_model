@@ -4,6 +4,7 @@ from fdt_formulas import tanh_5_params as t5
 from fdt_formulas import tanh_8_params as t8
 from fdt_formulas import tanh_9_params as t9
 from get_long_fdt import *
+from get_raw_fdt import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
@@ -21,7 +22,8 @@ n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 main_path = "transfer_function_interpolation\output"
 
 # Output folder name
-folder_name = "all-ch_all-pts_long-fdt_module_238_-40C"
+# folder_name = "all-ch_all-pts_long-fdt_module_238_-40C"
+folder_name = "all-ch_all-pts_short-fdt_module_NAPOLI_-40C"
 
 if n_params == 5:
     fdt = t5.gaps_fdt_tanh_5_params
@@ -59,15 +61,24 @@ for tau in range(min_tau, max_tau + 1):
             prefix + "_" + str(n_params) + "_params",
         )
 
-        # Obtain raw data
+        # Obtain raw data from long FDT
         # X and Y must be supplied as 1-D arrays
-        [dac_inj, ch_data] = get_long_fdt(
-            "transfer_function_interpolation\input\module_long_fdts", ch_number, tau
+        # [dac_inj, ch_data] = get_long_fdt(
+        #     "transfer_function_interpolation\input\module_long_fdts", ch_number, tau
+        # )
+
+        # Obtain raw data from module FDT file
+        # X and Y must be supplied as 1-D arrays
+        [dac_inj, ch_data] = get_raw_fdt(
+            r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat",
+            ch_number,
+            tau,
         )
 
         # Exclude channel output for 0 DAC_inj_code
-        ch_data = ch_data[1 : len(ch_data)]
-        dac_inj = dac_inj[1 : len(dac_inj)]
+        # Only when FDT starts from 0 DAC_inj_code
+        ch_data = ch_data[0 : len(ch_data)]
+        dac_inj = dac_inj[0 : len(dac_inj)]
 
         # Interpolator function call
         [
