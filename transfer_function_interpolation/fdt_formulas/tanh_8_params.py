@@ -17,7 +17,7 @@ def gaps_fdt_tanh_8_params(x, m1, m2, m3, m4, m5, m6, m7, m8):
     return output
 
 
-weights_fdt_tanh_8_params_old = [
+weights_fdt_tanh_8_params = [
     2398.2,
     1071.2,
     2.712,
@@ -28,7 +28,7 @@ weights_fdt_tanh_8_params_old = [
     1.7392,
 ]
 
-weights_fdt_tanh_8_params = [
+weights_fdt_tanh_8_params_sigma = [
     2354.98768589752,
     1045.55111079868,
     2.62814603729687,

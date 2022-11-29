@@ -69,8 +69,8 @@ def interpolate_fdt(
 
     # General bounds
     for h in initial_guess:
-        bound_low.append(h - abs(h / 2))
-        bound_up.append(h + abs(h / 2))
+        bound_low.append(h - abs(h))
+        bound_up.append(h + abs(h))
 
     # Bounds given from sigmas
     # h_count = 0

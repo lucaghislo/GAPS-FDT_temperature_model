@@ -21,18 +21,19 @@ n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 
 # Input FDT file path
 input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
-input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat"
+# input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat"
 
 # Input Temperature file path
 # If empty, is ignored
 input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\HK_Temperature.dat"
-input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\HK_Temperature.dat"
+# input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\HK_Temperature.dat"
+
 # Output folder path
 main_output_path = "transfer_function_interpolation\output"
 
 # Output folder name
 output_folder_name = "all-ch_all-pts_short-fdt_MODULE_496_Tamb"
-output_folder_name = "all-ch_all-pts_short-fdt_module_NAPOLI_-40C"
+# output_folder_name = "all-ch_all-pts_short-fdt_module_NAPOLI_-40C"
 
 if n_params == 5:
     fdt = t5.gaps_fdt_tanh_5_params
