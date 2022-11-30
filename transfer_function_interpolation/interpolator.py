@@ -236,11 +236,20 @@ def interpolate_fdt(
         residuals.append(res)
         residuals_percent.append((res / ans[i]) * 100)
 
+    # Write residuals to file
+    path_out_res = os.path.join(
+        folder_path,
+        prefix + "_residuals_" + str(num_parameters) + "_params.txt",
+    )
+    with open(path_out_res, "w") as fp:
+        for item in residuals:
+            fp.write(f"{item}\n")
+
     # Plot residuals compared to transfer function resolution
     plt.clf()
     plt.plot(
         y_data[0 : len(y_data) - 1],
-        resolution,
+        resolution_data,
         label="Resolution",
         color="green",
         marker="o",

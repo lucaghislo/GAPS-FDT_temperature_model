@@ -87,6 +87,11 @@ for tau in range(min_tau, max_tau + 1):
             tau,
         )
 
+        # Exclude channel output for 0 DAC_inj_code
+        # Only when FDT starts from 0 DAC_inj_code
+        ch_data = ch_data[1 : len(ch_data)]
+        dac_inj = dac_inj[1 : len(dac_inj)]
+
         # Interpolator function call
         [
             y_data,
