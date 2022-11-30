@@ -6,6 +6,8 @@ from fdt_formulas import tanh_9_params as t9
 from get_long_fdt import *
 from get_raw_fdt import *
 from get_module_temperature import *
+from import_pedestals import *
+from compute_weights import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
@@ -14,19 +16,23 @@ max_tau = 0  # Finishing peaking time (max: 7)
 
 # Channels
 min_ch = 0  # Starting channel (min: 0)
-max_ch = 3  # Finishing channel (max: 31)
+max_ch = 0  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 
 # Input FDT file path
 input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
-# input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat"
+# input_fdt_path = r"transfer_function_interpolation\inp4
 
-# Input Temperature file path
-# If empty, is ignored
+# Input temperature file path
 input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\HK_Temperature.dat"
 # input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\HK_Temperature.dat"
+
+# Input pedestals file path
+input_pedestal_path = (
+    r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\Pedestals.dat"
+)
 
 # Output folder path
 main_output_path = "transfer_function_interpolation\output"
@@ -92,7 +98,62 @@ for tau in range(min_tau, max_tau + 1):
         ch_data = ch_data[1 : len(ch_data)]
         dac_inj = dac_inj[1 : len(dac_inj)]
 
+        # Get pedestal data for given channel at tau
+        pedestal = import_pedestals(input_pedestal_path, ch_number, tau)
+        pedestal = pedestal[0]
+
         # Interpolator function call
+        [
+            y_data0,
+            x_data0,
+            ans0,
+            popt0,
+            resolution0,
+            resolution_data0,
+            residuals0,
+            residuals_percent0,
+            r_squared0,
+            weights0,
+        ] = interpolate_fdt(
+            ch_data,
+            dac_inj,
+            fdt,
+            guess,
+            n_params,
+            folder_path,
+            prefix,
+            temperature,
+            pedestal,
+        )
+
+        weights_first = compute_weigths(weights0, residuals0, resolution_data0)
+
+        [
+            y_data1,
+            x_data1,
+            ans1,
+            popt1,
+            resolution1,
+            resolution_data1,
+            residuals1,
+            residuals_percent1,
+            r_squared1,
+            weights1,
+        ] = interpolate_fdt(
+            ch_data,
+            dac_inj,
+            fdt,
+            popt0,
+            n_params,
+            folder_path,
+            prefix,
+            temperature,
+            pedestal,
+            weights_first,
+        )
+
+        weights_second = compute_weigths(weights1, residuals1, resolution_data1)
+
         [
             y_data,
             x_data,
@@ -103,15 +164,18 @@ for tau in range(min_tau, max_tau + 1):
             residuals,
             residuals_percent,
             r_squared,
+            weights,
         ] = interpolate_fdt(
             ch_data,
             dac_inj,
             fdt,
-            guess,
+            popt1,
             n_params,
             folder_path,
             prefix,
             temperature,
+            pedestal,
+            weights_second,
         )
 
         # Save output data from function

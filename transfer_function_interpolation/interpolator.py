@@ -35,6 +35,8 @@ def interpolate_fdt(
     folder_path,
     prefix,
     temperature,
+    pedestal,
+    weights_in=[],
 ):
 
     temp_flag = True
@@ -48,36 +50,33 @@ def interpolate_fdt(
     y_data = [yi * coeff_keV_fC for yi in y_data]
 
     # Conversion ADU to V
+    # x_data = [xi - pedestal for xi in x_data]
     x_data = [xi * coeff_ADU_mV for xi in x_data]
 
-    # Weigth definition (treated as **(-1))
-    weights = [(1 / (xi ** 2)) ** (-1) for xi in x_data]
+    if len(weights_in) == 0:
+        # Weigth definition (treated as **(-1))
+        weights = [(1 / (xi ** 2)) ** (-1) for xi in x_data]
+    else:
+        weights = weights_in
 
     # Bounds definition
     bound_low = []
     bound_up = []
-    param_sigmas = [
-        37.76040062999,
-        146.633098328572,
-        0.105811658364116,
-        0.0499149434652002,
-        0.0455252119725348,
-        78.9675506871334,
-        0.136764092951559,
-        0.0566284852328005,
-    ]
+
+    # Set m5 parameter (pedestal) to measured pedestal for the channel at given tau
+    # initial_guess[6] = pedestal * coeff_ADU_mV
 
     # General bounds
+    h_count = 0
     for h in initial_guess:
-        bound_low.append(h - abs(h))
-        bound_up.append(h + abs(h))
+        if h_count == 6:
+            bound_low.append(h - abs(h) / 2)
+            bound_up.append(h + abs(h) / 2)
+        else:
+            bound_low.append(h - abs(h) / 2)
+            bound_up.append(h + abs(h) / 2)
 
-    # Bounds given from sigmas
-    # h_count = 0
-    # for h in initial_guess:
-    #     bound_low.append(h - param_sigmas[h_count] * 10)
-    #     bound_up.append(h + param_sigmas[h_count] * 10)
-    #     h_count = h_count + 1
+        h_count = h_count + 1
 
     # Fit della curva
     popt, pcov = curve_fit(
@@ -236,6 +235,11 @@ def interpolate_fdt(
         residuals.append(res)
         residuals_percent.append((res / ans[i]) * 100)
 
+    resolution_data.append(resolution_data[len(resolution_data) - 1])
+    resolution.append(resolution[len(resolution) - 1])
+    residuals.append(residuals[len(residuals) - 1])
+    residuals_percent.append(residuals_percent[len(residuals_percent) - 1])
+
     # Write residuals to file
     path_out_res = os.path.join(
         folder_path,
@@ -249,7 +253,7 @@ def interpolate_fdt(
     plt.clf()
     plt.plot(
         y_data[0 : len(y_data) - 1],
-        resolution_data,
+        resolution_data[0 : len(y_data) - 1],
         label="Resolution",
         color="green",
         marker="o",
@@ -257,7 +261,7 @@ def interpolate_fdt(
     )
     plt.plot(
         y_data[0 : len(y_data) - 1],
-        residuals,
+        residuals[0 : len(y_data) - 1],
         label="Residuals",
         color="blue",
         marker="o",
@@ -352,4 +356,5 @@ def interpolate_fdt(
         residuals,
         residuals_percent,
         r_squared,
+        weights,
     )
