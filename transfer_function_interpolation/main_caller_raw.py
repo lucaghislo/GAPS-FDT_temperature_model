@@ -11,19 +11,22 @@ from compute_weights import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
-min_tau = 0  # Starting peaking time (min: 0)
-max_tau = 0  # Finishing peaking time (max: 7)
+min_tau = 6  # Starting peaking time (min: 0)
+max_tau = 6  # Finishing peaking time (max: 7)
 
 # Channels
-min_ch = 0  # Starting channel (min: 0)
-max_ch = 0  # Finishing channel (max: 31)
+min_ch = 14  # Starting channel (min: 0)
+max_ch = 18  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 
+# Number of optimization steps
+n_iter = 10
+
 # Input FDT file path
 input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
-# input_fdt_path = r"transfer_function_interpolation\inp4
+# input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat"
 
 # Input temperature file path
 input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\HK_Temperature.dat"
@@ -33,6 +36,7 @@ input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496
 input_pedestal_path = (
     r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\Pedestals.dat"
 )
+# input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\Pedestals.dat"
 
 # Output folder path
 main_output_path = "transfer_function_interpolation\output"
@@ -102,81 +106,68 @@ for tau in range(min_tau, max_tau + 1):
         pedestal = import_pedestals(input_pedestal_path, ch_number, tau)
         pedestal = pedestal[0]
 
-        # Interpolator function call
-        [
-            y_data0,
-            x_data0,
-            ans0,
-            popt0,
-            resolution0,
-            resolution_data0,
-            residuals0,
-            residuals_percent0,
-            r_squared0,
-            weights0,
-        ] = interpolate_fdt(
-            ch_data,
-            dac_inj,
-            fdt,
-            guess,
-            n_params,
-            folder_path,
-            prefix,
-            temperature,
-            pedestal,
-        )
+        weights_computed = []
+        r2_computed = None
 
-        weights_first = compute_weigths(weights0, residuals0, resolution_data0)
+        for k in range(0, n_iter + 1):
+            if k == 0:
+                [
+                    y_data,
+                    x_data,
+                    ans,
+                    popt,
+                    resolution,
+                    resolution_data,
+                    residuals,
+                    residuals_percent,
+                    r_squared,
+                    weights,
+                ] = interpolate_fdt(
+                    ch_data,
+                    dac_inj,
+                    fdt,
+                    guess,
+                    n_params,
+                    folder_path,
+                    prefix,
+                    temperature,
+                    pedestal,
+                    k,
+                )
 
-        [
-            y_data1,
-            x_data1,
-            ans1,
-            popt1,
-            resolution1,
-            resolution_data1,
-            residuals1,
-            residuals_percent1,
-            r_squared1,
-            weights1,
-        ] = interpolate_fdt(
-            ch_data,
-            dac_inj,
-            fdt,
-            popt0,
-            n_params,
-            folder_path,
-            prefix,
-            temperature,
-            pedestal,
-            weights_first,
-        )
+                r2_computed = r_squared
+            else:
+                [
+                    y_data,
+                    x_data,
+                    ans,
+                    popt,
+                    resolution,
+                    resolution_data,
+                    residuals,
+                    residuals_percent,
+                    r_squared,
+                    weights,
+                ] = interpolate_fdt(
+                    ch_data,
+                    dac_inj,
+                    fdt,
+                    popt,
+                    n_params,
+                    folder_path,
+                    prefix,
+                    temperature,
+                    pedestal,
+                    k,
+                    weights_computed,
+                )
 
-        weights_second = compute_weigths(weights1, residuals1, resolution_data1)
+            if r_squared < r2_computed:
+                break
+            else:
+                r2_computed = r_squared
 
-        [
-            y_data,
-            x_data,
-            ans,
-            popt,
-            resolution,
-            resolution_data,
-            residuals,
-            residuals_percent,
-            r_squared,
-            weights,
-        ] = interpolate_fdt(
-            ch_data,
-            dac_inj,
-            fdt,
-            popt1,
-            n_params,
-            folder_path,
-            prefix,
-            temperature,
-            pedestal,
-            weights_second,
-        )
+            weights_computed = compute_weigths(weights, residuals, resolution_data)
 
         # Save output data from function
         all_popt.append(popt)

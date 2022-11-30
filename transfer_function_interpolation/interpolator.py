@@ -36,6 +36,7 @@ def interpolate_fdt(
     prefix,
     temperature,
     pedestal,
+    n_iteration,
     weights_in=[],
 ):
 
@@ -95,7 +96,7 @@ def interpolate_fdt(
 
     # R2
     r_squared = r2_score(y_data, ans)
-    print(prefix + " -> R2: " + str(r_squared))
+    print(prefix + " iter " + str(n_iteration) + " -> R2: " + str(r_squared))
 
     # Make directory to store output files
     if not os.path.exists(folder_path):
@@ -252,16 +253,16 @@ def interpolate_fdt(
     # Plot residuals compared to transfer function resolution
     plt.clf()
     plt.plot(
-        y_data[0 : len(y_data) - 1],
-        resolution_data[0 : len(y_data) - 1],
+        y_data[0 : len(y_data)],
+        resolution_data[0 : len(y_data)],
         label="Resolution",
         color="green",
         marker="o",
         markersize=1.5,
     )
     plt.plot(
-        y_data[0 : len(y_data) - 1],
-        residuals[0 : len(y_data) - 1],
+        y_data[0 : len(y_data)],
+        residuals[0 : len(y_data)],
         label="Residuals",
         color="blue",
         marker="o",
@@ -285,7 +286,12 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_lin-lin.pdf",
+        prefix
+        + "_residuals_tanh_"
+        + str(num_parameters)
+        + "_params_lin-lin_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
     plt.savefig(path_out)
 
@@ -296,7 +302,12 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_log-log.pdf",
+        prefix
+        + "_residuals_tanh_"
+        + str(num_parameters)
+        + "_params_log-log_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
     plt.savefig(path_out)
 
@@ -307,15 +318,20 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_lin-log.pdf",
+        prefix
+        + "_residuals_tanh_"
+        + str(num_parameters)
+        + "_params_lin-log_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
     plt.savefig(path_out)
 
     # Plot residuals as percentage
     plt.clf()
     plt.plot(
-        y_data[0 : len(y_data) - 1],
-        residuals_percent[0 : len(y_data) - 1],
+        y_data[0 : len(y_data)],
+        residuals_percent[0 : len(y_data)],
         label="Residuals",
         color="blue",
         marker="o",
@@ -340,7 +356,12 @@ def interpolate_fdt(
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
-        prefix + "_residuals_tanh_" + str(num_parameters) + "_params_percent.pdf",
+        prefix
+        + "_residuals_tanh_"
+        + str(num_parameters)
+        + "_params_percent_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
     plt.savefig(path_out)
 
