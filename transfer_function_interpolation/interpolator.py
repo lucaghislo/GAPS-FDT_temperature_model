@@ -8,6 +8,7 @@ from matplotlib.pyplot import figure
 from mpmath import *
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
+from get_residual_metric import *
 
 # Conversion factor DAC_inj_code to keV [keV/DAC_inj_code]
 coeff_DAC_inj_kev = 0.841
@@ -245,20 +246,23 @@ def interpolate_fdt(
     residuals = []
     resolution_data = []
     residuals_percent = []
-    for i in range(0, len(x_data) - 1):
-        den = x_data[i + 1] - x_data[i]
-        if den == 0:
-            den = 10 ** -10
-        resolution_data.append((y_data[i + 1] - y_data[i]) / den)
-        resolution.append((ans[i + 1] - ans[i]) / den)
+    for i in range(0, len(x_data)):
+        # den = x_data[i + 1] - x_data[i]
+        # if den == 0:
+        #     den = 10 ** -10
+        # resolution_data.append((y_data[i + 1] - y_data[i]) / den)
+        # resolution.append((ans[i + 1] - ans[i]) / den)
         res = abs(y_data[i] - ans[i])
         residuals.append(res)
         residuals_percent.append((res / ans[i]) * 100)
 
-    resolution_data.append(resolution_data[len(resolution_data) - 1])
-    resolution.append(resolution[len(resolution) - 1])
-    residuals.append(residuals[len(residuals) - 1])
-    residuals_percent.append(residuals_percent[len(residuals_percent) - 1])
+    resolution = np.gradient(interpolating_function(x_data, *popt), edge_order=2)
+    resolution_data = np.gradient(y_data, edge_order=2)
+
+    # resolution_data.append(resolution_data[len(resolution_data) - 1])
+    # resolution.append(resolution[len(resolution) - 1])
+    # residuals.append(residuals[len(residuals) - 1])
+    # residuals_percent.append(residuals_percent[len(residuals_percent) - 1])
 
     # Write residuals to file
     if save_file_flag:
@@ -293,16 +297,16 @@ def interpolate_fdt(
     # Plot residuals compared to transfer function resolution
     plt.clf()
     plt.plot(
-        y_data[0 : len(y_data)],
-        resolution_data[0 : len(y_data)],
+        y_data,
+        resolution,
         label="Resolution",
         color="green",
         marker="o",
         markersize=1.5,
     )
     plt.plot(
-        y_data[0 : len(y_data)],
-        residuals[0 : len(y_data)],
+        y_data,
+        residuals,
         label="Residuals",
         color="blue",
         marker="o",
@@ -357,8 +361,8 @@ def interpolate_fdt(
     # Plot residuals as percentage
     plt.clf()
     plt.plot(
-        y_data[0 : len(y_data)],
-        residuals_percent[0 : len(y_data)],
+        y_data,
+        residuals_percent,
         label="Residuals",
         color="blue",
         marker="o",
@@ -395,8 +399,8 @@ def interpolate_fdt(
     # Plot weights
     plt.clf()
     plt.plot(
-        x_data[0 : len(y_data)],
-        weights[0 : len(y_data)],
+        x_data,
+        weights,
         marker="o",
         markersize=1.5,
     )
@@ -417,6 +421,35 @@ def interpolate_fdt(
         folder_path,
         prefix
         + "_weights_tanh_"
+        + str(num_parameters)
+        + "_params_lin-lin_iter"
+        + str(n_iteration)
+        + ".pdf",
+    )
+
+    if save_file_flag:
+        plt.savefig(path_out)
+
+    # Plot error histogram
+    [sum, array] = residual_metric(resolution, residuals)
+    plt.clf()
+    plt.hist(array, bins=[0, 1, 2, 3])
+    plt.ylabel("Count")
+    plt.xlabel("Error [ADU]")
+    if temp_flag:
+        plt.title(
+            "Errors at T = " + str(temperature) + " °C",
+            weight="bold",
+        )
+    else:
+        plt.title(
+            "Errors",
+            weight="bold",
+        )
+    path_out = os.path.join(
+        folder_path,
+        prefix
+        + "_errors_tanh_"
         + str(num_parameters)
         + "_params_lin-lin_iter"
         + str(n_iteration)

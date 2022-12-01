@@ -12,8 +12,8 @@ from get_residual_metric import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
-min_tau = 0  # Starting peaking time (min: 0)
-max_tau = 7  # Finishing peaking time (max: 7)
+min_tau = 4  # Starting peaking time (min: 0)
+max_tau = 4  # Finishing peaking time (max: 7)
 
 # Channels
 min_ch = 0  # Starting channel (min: 0)
@@ -26,18 +26,19 @@ n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 n_iter = 300
 
 # Input FDT file path
-input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
+# input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
 # input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat"
+input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\TransferFunction.dat"
 
 # Input temperature file path
-input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\HK_Temperature.dat"
+# input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\HK_Temperature.dat"
 # input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\HK_Temperature.dat"
+input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\HK_Temperature.dat"
 
 # Input pedestals file path
-input_pedestal_path = (
-    r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\Pedestals.dat"
-)
+# input_pedestal_path = (r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\Pedestals.dat")
 # input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\Pedestals.dat"
+input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\Pedestals.dat"
 
 # Output folder path
 main_output_path = "transfer_function_interpolation\output"
@@ -45,6 +46,7 @@ main_output_path = "transfer_function_interpolation\output"
 # Output folder name
 output_folder_name = "all-ch_all-pts_short-fdt_MODULE_496_Tamb"
 # output_folder_name = "all-ch_all-pts_short-fdt_module_NAPOLI_-40C"
+output_folder_name = "all-ch_all-pts_short-fdt_Module_Bergamo_-40C"
 
 if n_params == 5:
     fdt = t5.gaps_fdt_tanh_5_params
@@ -134,9 +136,9 @@ for tau in range(min_tau, max_tau + 1):
             True,
         )
 
-        res_metric = residual_metric(resolution, residuals, x_data)
-        print(res_metric)
-        weights_computed = compute_weigths(weights, residuals, resolution_data, x_data)
+        res_metric = residual_metric(resolution, residuals)
+        # print(res_metric[0])
+        weights_computed = compute_weigths(weights, residuals, resolution_data)
 
         for k in range(1, n_iter + 2):
             [
@@ -161,17 +163,17 @@ for tau in range(min_tau, max_tau + 1):
                 temperature,
                 pedestal,
                 k,
-                False,
+                True,
                 weights_computed,
             )
 
-            res_metric_iter = residual_metric(resolution_iter, residuals_iter, x_data)
-            print(res_metric_iter)
+            res_metric_iter = residual_metric(resolution_iter, residuals_iter)
+            # print(res_metric_iter[0])
 
-            if (res_metric_iter < res_metric) and (k < n_iter + 1):
+            if (res_metric_iter[0] < res_metric[0]) and (k < n_iter + 1):
                 res_metric = res_metric_iter
                 weights_computed = compute_weigths(
-                    weights_iter, residuals_iter, resolution_data_iter, x_data
+                    weights_iter, residuals_iter, resolution_data_iter
                 )
                 ans = ans_iter
                 popt = popt_iter
