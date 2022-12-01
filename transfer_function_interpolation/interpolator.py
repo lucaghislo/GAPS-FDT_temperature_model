@@ -435,7 +435,7 @@ def interpolate_fdt(
     # Plot error histogram
     plt.clf()
     [sum, array] = residual_metric(resolution_data, residuals)
-    counts, bins, bars = plt.hist(array, bins=[0, 1, 2, 3])
+    counts, bins, bars = plt.hist(array, bins=[0, 1, 2, 3], edgecolor="black")
     # set colors
     cmap = plt.get_cmap("jet")
     low = cmap(0.5)
