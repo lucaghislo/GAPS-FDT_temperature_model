@@ -9,6 +9,8 @@ from mpmath import *
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
 from get_residual_metric import *
+from matplotlib.patches import Rectangle
+
 
 # Conversion factor DAC_inj_code to keV [keV/DAC_inj_code]
 coeff_DAC_inj_kev = 0.841
@@ -431,9 +433,33 @@ def interpolate_fdt(
         plt.savefig(path_out)
 
     # Plot error histogram
-    [sum, array] = residual_metric(resolution_data, residuals)
     plt.clf()
-    plt.hist(array, bins=[0, 1, 2, 3])
+    [sum, array] = residual_metric(resolution_data, residuals)
+    counts, bins, bars = plt.hist(array, bins=[0, 1, 2, 3])
+    # set colors
+    cmap = plt.get_cmap("jet")
+    low = cmap(0.5)
+    medium = cmap(0.25)
+    high = cmap(0.8)
+    bars[0].set_facecolor(low)
+    bars[1].set_facecolor(medium)
+    bars[2].set_facecolor(high)
+
+    # create legend
+    handles = [Rectangle((0, 0), 1, 1, color=c, ec="k") for c in [low, medium, high]]
+    percentages = []
+    for i in range(0, 3):
+        perc = counts[i] / np.sum(counts)
+        perc = perc * 100
+        percentages.append(np.round(perc, 2))
+
+    labels = [
+        str(percentages[0]) + " %",
+        str(percentages[1]) + " %",
+        str(percentages[2]) + " %",
+    ]
+    plt.legend(handles, labels)
+
     plt.ylabel("Count")
     plt.xlabel("Error [ADU]")
     if temp_flag:

@@ -12,8 +12,8 @@ from get_residual_metric import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
-min_tau = 4  # Starting peaking time (min: 0)
-max_tau = 4  # Finishing peaking time (max: 7)
+min_tau = 0  # Starting peaking time (min: 0)
+max_tau = 7  # Finishing peaking time (max: 7)
 
 # Channels
 min_ch = 0  # Starting channel (min: 0)
