@@ -246,23 +246,23 @@ def interpolate_fdt(
     residuals = []
     resolution_data = []
     residuals_percent = []
-    for i in range(0, len(x_data)):
-        # den = x_data[i + 1] - x_data[i]
-        # if den == 0:
-        #     den = 10 ** -10
-        # resolution_data.append((y_data[i + 1] - y_data[i]) / den)
-        # resolution.append((ans[i + 1] - ans[i]) / den)
+    for i in range(0, len(x_data) - 1):
+        den = x_data[i + 1] - x_data[i]
+        if den == 0:
+            den = 10 ** -10
+        resolution_data.append((y_data[i + 1] - y_data[i]) / den)
+        resolution.append((ans[i + 1] - ans[i]) / den)
         res = abs(y_data[i] - ans[i])
         residuals.append(res)
         residuals_percent.append((res / ans[i]) * 100)
 
-    resolution = np.gradient(interpolating_function(x_data, *popt), edge_order=2)
-    resolution_data = np.gradient(y_data, edge_order=2)
+    # resolution = np.gradient(ans, edge_order=2)
+    # resolution_data = np.gradient(y_data, edge_order=2)
 
-    # resolution_data.append(resolution_data[len(resolution_data) - 1])
-    # resolution.append(resolution[len(resolution) - 1])
-    # residuals.append(residuals[len(residuals) - 1])
-    # residuals_percent.append(residuals_percent[len(residuals_percent) - 1])
+    resolution_data.append(resolution_data[len(resolution_data) - 1] * 1.1)
+    resolution.append(resolution[len(resolution) - 1] * 1.1)
+    residuals.append(residuals[len(residuals) - 1] * 1.1)
+    residuals_percent.append(residuals_percent[len(residuals_percent) - 1] * 1.1)
 
     # Write residuals to file
     if save_file_flag:
@@ -298,7 +298,7 @@ def interpolate_fdt(
     plt.clf()
     plt.plot(
         y_data,
-        resolution,
+        resolution_data,
         label="Resolution",
         color="green",
         marker="o",
@@ -431,7 +431,7 @@ def interpolate_fdt(
         plt.savefig(path_out)
 
     # Plot error histogram
-    [sum, array] = residual_metric(resolution, residuals)
+    [sum, array] = residual_metric(resolution_data, residuals)
     plt.clf()
     plt.hist(array, bins=[0, 1, 2, 3])
     plt.ylabel("Count")
