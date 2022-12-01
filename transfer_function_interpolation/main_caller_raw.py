@@ -8,21 +8,22 @@ from get_raw_fdt import *
 from get_module_temperature import *
 from import_pedestals import *
 from compute_weights import *
+from get_residual_metric import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
-min_tau = 6  # Starting peaking time (min: 0)
-max_tau = 6  # Finishing peaking time (max: 7)
+min_tau = 0  # Starting peaking time (min: 0)
+max_tau = 7  # Finishing peaking time (max: 7)
 
 # Channels
-min_ch = 14  # Starting channel (min: 0)
-max_ch = 18  # Finishing channel (max: 31)
+min_ch = 0  # Starting channel (min: 0)
+max_ch = 31  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 
-# Number of optimization steps
-n_iter = 10
+# Maximum number of optimization steps
+n_iter = 300
 
 # Input FDT file path
 input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
@@ -107,47 +108,94 @@ for tau in range(min_tau, max_tau + 1):
         pedestal = pedestal[0]
 
         weights_computed = []
-        r2_computed = None
 
-        for k in range(0, n_iter + 1):
-            if k == 0:
-                [
-                    y_data,
-                    x_data,
-                    ans,
-                    popt,
-                    resolution,
-                    resolution_data,
-                    residuals,
-                    residuals_percent,
-                    r_squared,
-                    weights,
-                ] = interpolate_fdt(
-                    ch_data,
-                    dac_inj,
-                    fdt,
-                    guess,
-                    n_params,
-                    folder_path,
-                    prefix,
-                    temperature,
-                    pedestal,
-                    k,
+        [
+            y_data,
+            x_data,
+            ans,
+            popt,
+            resolution,
+            resolution_data,
+            residuals,
+            residuals_percent,
+            r_squared,
+            weights,
+        ] = interpolate_fdt(
+            ch_data,
+            dac_inj,
+            fdt,
+            guess,
+            n_params,
+            folder_path,
+            prefix,
+            temperature,
+            pedestal,
+            0,
+            True,
+        )
+
+        res_metric = residual_metric(resolution, residuals, x_data)
+        print(res_metric)
+        weights_computed = compute_weigths(weights, residuals, resolution_data, x_data)
+
+        for k in range(1, n_iter + 2):
+            [
+                y_data_iter,
+                x_data_iter,
+                ans_iter,
+                popt_iter,
+                resolution_iter,
+                resolution_data_iter,
+                residuals_iter,
+                residuals_percent_iter,
+                r_squared_iter,
+                weights_iter,
+            ] = interpolate_fdt(
+                ch_data,
+                dac_inj,
+                fdt,
+                popt,
+                n_params,
+                folder_path,
+                prefix,
+                temperature,
+                pedestal,
+                k,
+                False,
+                weights_computed,
+            )
+
+            res_metric_iter = residual_metric(resolution_iter, residuals_iter, x_data)
+            print(res_metric_iter)
+
+            if (res_metric_iter < res_metric) and (k < n_iter + 1):
+                res_metric = res_metric_iter
+                weights_computed = compute_weigths(
+                    weights_iter, residuals_iter, resolution_data_iter, x_data
                 )
-
-                r2_computed = r_squared
+                ans = ans_iter
+                popt = popt_iter
+                resolution = resolution_iter
+                resolution_data = resolution_data_iter
+                residuals = residuals_iter
+                residuals_percent = residuals_percent_iter
+                r_squared = r_squared_iter
+                weights = weights_iter
             else:
+                print(
+                    "\nIteration stopped! Best found at iteration " + str(k - 1) + "."
+                )
                 [
-                    y_data,
-                    x_data,
-                    ans,
-                    popt,
-                    resolution,
-                    resolution_data,
-                    residuals,
-                    residuals_percent,
-                    r_squared,
-                    weights,
+                    y_data_iter,
+                    x_data_iter,
+                    ans_iter,
+                    popt_iter,
+                    resolution_iter,
+                    resolution_data_iter,
+                    residuals_iter,
+                    residuals_percent_iter,
+                    r_squared_iter,
+                    weights_iter,
                 ] = interpolate_fdt(
                     ch_data,
                     dac_inj,
@@ -158,16 +206,20 @@ for tau in range(min_tau, max_tau + 1):
                     prefix,
                     temperature,
                     pedestal,
-                    k,
-                    weights_computed,
+                    k - 1,
+                    True,
+                    weights,
                 )
-
-            if r_squared < r2_computed:
+                ans = ans_iter
+                popt = popt_iter
+                resolution = resolution_iter
+                resolution_data = resolution_data_iter
+                residuals = residuals_iter
+                residuals_percent = residuals_percent_iter
+                r_squared = r_squared_iter
+                weights = weights_iter
+                print("\n")
                 break
-            else:
-                r2_computed = r_squared
-
-            weights_computed = compute_weigths(weights, residuals, resolution_data)
 
         # Save output data from function
         all_popt.append(popt)

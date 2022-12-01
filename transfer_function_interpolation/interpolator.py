@@ -37,6 +37,7 @@ def interpolate_fdt(
     temperature,
     pedestal,
     n_iteration,
+    save_file_flag,
     weights_in=[],
 ):
 
@@ -103,17 +104,23 @@ def interpolate_fdt(
         os.mkdir(folder_path)
 
     # Write estimated coefficients to file
-    path_out = os.path.join(
-        folder_path,
-        prefix + "_estimated_coefficients_" + str(num_parameters) + "_params.txt",
-    )
-    with open(path_out, "w") as fp:
-        counter = 0
-        for item in popt:
-            fp.write(f"m{counter + 1}: {item}\n")
-            counter = counter + 1
+    if save_file_flag:
+        path_out = os.path.join(
+            folder_path,
+            prefix
+            + "_estimated_coefficients_"
+            + str(num_parameters)
+            + "_params_iter"
+            + str(n_iteration)
+            + ".txt",
+        )
+        with open(path_out, "w") as fp:
+            counter = 0
+            for item in popt:
+                fp.write(f"m{counter + 1}: {item}\n")
+                counter = counter + 1
 
-        fp.write(f"\nR2: {r_squared}\n")
+            fp.write(f"\nR2: {r_squared}\n")
 
     # Plot interpolated data [fC vs V]
     plt.clf()
@@ -148,9 +155,12 @@ def interpolate_fdt(
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
-        + "_params_fC_V_log-log.pdf",
+        + "_params_fC_V_log-log_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
-    plt.savefig(path_out)
+    if save_file_flag:
+        plt.savefig(path_out)
 
     # Linear scale
     plt.yscale("linear")
@@ -162,9 +172,12 @@ def interpolate_fdt(
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
-        + "_params_fC_V_lin-lin.pdf",
+        + "_params_fC_V_lin-lin_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
-    plt.savefig(path_out)
+    if save_file_flag:
+        plt.savefig(path_out)
 
     # Plot interpolated data [keV vs ADU]
     x_data = [xi / coeff_ADU_mV for xi in x_data]
@@ -203,9 +216,12 @@ def interpolate_fdt(
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
-        + "_params_keV_ADU_log-log.pdf",
+        + "_params_keV_ADU_log-log_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
-    plt.savefig(path_out)
+    if save_file_flag:
+        plt.savefig(path_out)
 
     # Linear scale
     plt.yscale("linear")
@@ -217,9 +233,12 @@ def interpolate_fdt(
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
-        + "_params_keV_ADU_lin-lin.pdf",
+        + "_params_keV_ADU_lin-lin_iter"
+        + str(n_iteration)
+        + ".pdf",
     )
-    plt.savefig(path_out)
+    if save_file_flag:
+        plt.savefig(path_out)
 
     # Residual evaluation and comparison with transfer function resolution
     resolution = []
@@ -242,13 +261,34 @@ def interpolate_fdt(
     residuals_percent.append(residuals_percent[len(residuals_percent) - 1])
 
     # Write residuals to file
-    path_out_res = os.path.join(
-        folder_path,
-        prefix + "_residuals_" + str(num_parameters) + "_params.txt",
-    )
-    with open(path_out_res, "w") as fp:
-        for item in residuals:
-            fp.write(f"{item}\n")
+    if save_file_flag:
+        path_out_res = os.path.join(
+            folder_path,
+            prefix
+            + "_residuals_"
+            + str(num_parameters)
+            + "_params_iter"
+            + str(n_iteration)
+            + ".txt",
+        )
+        with open(path_out_res, "w") as fp:
+            for item in residuals:
+                fp.write(f"{item}\n")
+
+    # Write weights to file
+    if save_file_flag:
+        path_out_weights = os.path.join(
+            folder_path,
+            prefix
+            + "_weights_"
+            + str(num_parameters)
+            + "_params_iter"
+            + str(n_iteration)
+            + ".txt",
+        )
+        with open(path_out_weights, "w") as fp:
+            for item in weights:
+                fp.write(f"{item}\n")
 
     # Plot residuals compared to transfer function resolution
     plt.clf()
@@ -293,7 +333,9 @@ def interpolate_fdt(
         + str(n_iteration)
         + ".pdf",
     )
-    plt.savefig(path_out)
+
+    if save_file_flag:
+        plt.savefig(path_out)
 
     # Log scale
     plt.yscale("log")
@@ -309,23 +351,8 @@ def interpolate_fdt(
         + str(n_iteration)
         + ".pdf",
     )
-    plt.savefig(path_out)
-
-    # Lin-log scale
-    plt.yscale("linear")
-    plt.xscale("log")
-    plt.legend()
-    plt.grid(True)
-    path_out = os.path.join(
-        folder_path,
-        prefix
-        + "_residuals_tanh_"
-        + str(num_parameters)
-        + "_params_lin-log_iter"
-        + str(n_iteration)
-        + ".pdf",
-    )
-    plt.savefig(path_out)
+    if save_file_flag:
+        plt.savefig(path_out)
 
     # Plot residuals as percentage
     plt.clf()
@@ -352,7 +379,6 @@ def interpolate_fdt(
     plt.yscale("log")
     plt.xscale("log")
     plt.legend()
-    # plt.ylim([0, 100])
     plt.grid(True)
     path_out = os.path.join(
         folder_path,
@@ -363,9 +389,42 @@ def interpolate_fdt(
         + str(n_iteration)
         + ".pdf",
     )
-    plt.savefig(path_out)
+    if save_file_flag:
+        plt.savefig(path_out)
 
-    # plt.show()
+    # Plot weights
+    plt.clf()
+    plt.plot(
+        x_data[0 : len(y_data)],
+        weights[0 : len(y_data)],
+        marker="o",
+        markersize=1.5,
+    )
+    plt.xlabel("Channel Output [ADU]")
+    plt.ylabel("Weight")
+    if temp_flag:
+        plt.title(
+            "Weights vs Channel Output at T = " + str(temperature) + " °C",
+            weight="bold",
+        )
+    else:
+        plt.title(
+            "Weights vs Channel Output",
+            weight="bold",
+        )
+    plt.grid(True)
+    path_out = os.path.join(
+        folder_path,
+        prefix
+        + "_weights_tanh_"
+        + str(num_parameters)
+        + "_params_lin-lin_iter"
+        + str(n_iteration)
+        + ".pdf",
+    )
+
+    if save_file_flag:
+        plt.savefig(path_out)
 
     return (
         x_data,
