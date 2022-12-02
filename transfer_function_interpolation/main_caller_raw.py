@@ -13,11 +13,11 @@ from get_residual_metric import *
 # SCRIPT CONFIGURATION
 # Peaking time
 min_tau = 0  # Starting peaking time (min: 0)
-max_tau = 7  # Finishing peaking time (max: 7)
+max_tau = 0  # Finishing peaking time (max: 7)
 
 # Channels
 min_ch = 0  # Starting channel (min: 0)
-max_ch = 31  # Finishing channel (max: 31)
+max_ch = 0  # Finishing channel (max: 31)
 
 # Model selection
 n_params = 8  # Number of parameters (allowed: 5, 8, 9)
@@ -38,7 +38,7 @@ input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Ber
 # Input pedestals file path
 # input_pedestal_path = (r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\Pedestals.dat")
 # input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\Pedestals.dat"
-input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\Pedestals.dat"
+# input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\Pedestals.dat"
 
 # Output folder path
 main_output_path = "transfer_function_interpolation\output"
@@ -106,8 +106,8 @@ for tau in range(min_tau, max_tau + 1):
         dac_inj = dac_inj[1 : len(dac_inj)]
 
         # Get pedestal data for given channel at tau
-        pedestal = import_pedestals(input_pedestal_path, ch_number, tau)
-        pedestal = pedestal[0]
+        # pedestal = import_pedestals(input_pedestal_path, ch_number, tau)
+        # pedestal = pedestal[0]
 
         weights_computed = []
 
@@ -131,7 +131,6 @@ for tau in range(min_tau, max_tau + 1):
             folder_path,
             prefix,
             temperature,
-            pedestal,
             0,
             True,
         )
@@ -161,7 +160,6 @@ for tau in range(min_tau, max_tau + 1):
                 folder_path,
                 prefix,
                 temperature,
-                pedestal,
                 k,
                 True,
                 weights_computed,
@@ -207,7 +205,6 @@ for tau in range(min_tau, max_tau + 1):
                     folder_path,
                     prefix,
                     temperature,
-                    pedestal,
                     k - 1,
                     True,
                     weights,

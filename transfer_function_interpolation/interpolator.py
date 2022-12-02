@@ -38,10 +38,10 @@ def interpolate_fdt(
     folder_path,
     prefix,
     temperature,
-    pedestal,
     n_iteration,
     save_file_flag,
     weights_in=[],
+    pedestal=[],
 ):
 
     temp_flag = True
@@ -106,10 +106,20 @@ def interpolate_fdt(
     if not os.path.exists(folder_path):
         os.mkdir(folder_path)
 
+    iter_folder_path = os.path.join(folder_path, "iter_" + str(n_iteration))
+
+    if not os.path.exists(iter_folder_path):
+        os.mkdir(iter_folder_path)
+
+    data_folder_path = os.path.join(iter_folder_path, "data")
+
+    if not os.path.exists(data_folder_path):
+        os.mkdir(data_folder_path)
+
     # Write estimated coefficients to file
     if save_file_flag:
         path_out = os.path.join(
-            folder_path,
+            data_folder_path,
             prefix
             + "_estimated_coefficients_"
             + str(num_parameters)
@@ -154,7 +164,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
@@ -171,7 +181,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
@@ -215,7 +225,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
@@ -232,7 +242,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_interpolation_tanh_"
         + str(num_parameters)
@@ -269,7 +279,7 @@ def interpolate_fdt(
     # Write residuals to file
     if save_file_flag:
         path_out_res = os.path.join(
-            folder_path,
+            data_folder_path,
             prefix
             + "_residuals_"
             + str(num_parameters)
@@ -284,7 +294,7 @@ def interpolate_fdt(
     # Write weights to file
     if save_file_flag:
         path_out_weights = os.path.join(
-            folder_path,
+            iter_folder_path,
             prefix
             + "_weights_"
             + str(num_parameters)
@@ -331,7 +341,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_residuals_tanh_"
         + str(num_parameters)
@@ -349,7 +359,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_residuals_tanh_"
         + str(num_parameters)
@@ -387,7 +397,7 @@ def interpolate_fdt(
     plt.legend()
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_residuals_tanh_"
         + str(num_parameters)
@@ -397,6 +407,11 @@ def interpolate_fdt(
     )
     if save_file_flag:
         plt.savefig(path_out)
+
+    weights_folder_path = os.path.join(iter_folder_path, "weights")
+
+    if not os.path.exists(weights_folder_path):
+        os.mkdir(weights_folder_path)
 
     # Plot weights
     plt.clf()
@@ -420,7 +435,7 @@ def interpolate_fdt(
         )
     plt.grid(True)
     path_out = os.path.join(
-        folder_path,
+        weights_folder_path,
         prefix
         + "_weights_tanh_"
         + str(num_parameters)
@@ -473,7 +488,7 @@ def interpolate_fdt(
             weight="bold",
         )
     path_out = os.path.join(
-        folder_path,
+        iter_folder_path,
         prefix
         + "_errors_tanh_"
         + str(num_parameters)
