@@ -294,7 +294,7 @@ def interpolate_fdt(
     # Write weights to file
     if save_file_flag:
         path_out_weights = os.path.join(
-            iter_folder_path,
+            data_folder_path,
             prefix
             + "_weights_"
             + str(num_parameters)
@@ -499,6 +499,51 @@ def interpolate_fdt(
 
     if save_file_flag:
         plt.savefig(path_out)
+
+    # Write x_data to file
+    if save_file_flag:
+        path_out_res = os.path.join(
+            data_folder_path,
+            prefix
+            + "_ydata_"
+            + str(num_parameters)
+            + "_params_iter"
+            + str(n_iteration)
+            + ".txt",
+        )
+        with open(path_out_res, "w") as fp:
+            for item in x_data:
+                fp.write(f"{item}\n")
+
+    # Write y_data to file
+    if save_file_flag:
+        path_out_res = os.path.join(
+            data_folder_path,
+            prefix
+            + "_xdata_"
+            + str(num_parameters)
+            + "_params_iter"
+            + str(n_iteration)
+            + ".txt",
+        )
+        with open(path_out_res, "w") as fp:
+            for item in y_data:
+                fp.write(f"{item}\n")
+
+    # Write computed data over function to file
+    if save_file_flag:
+        path_out_res = os.path.join(
+            data_folder_path,
+            prefix
+            + "_ans_"
+            + str(num_parameters)
+            + "_params_iter"
+            + str(n_iteration)
+            + ".txt",
+        )
+        with open(path_out_res, "w") as fp:
+            for item in ans:
+                fp.write(f"{item}\n")
 
     return (
         x_data,

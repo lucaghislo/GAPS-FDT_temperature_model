@@ -1,0 +1,12 @@
+TODOs
+
+Single channel at every iteration
+1) Implement data saving of all arrays in /data folder
+2) Save output plots after interpolation in /interpolation_plots folder
+3) Save residual plots in /residual_plots folder
+4) Save error histogram in /error_histogram folder
+5) Add scatter plot of residuals vs resolution with line marking 1x and 2x Resolution
+
+After computation
+1) Final residual plot
+2) Final error histogram
