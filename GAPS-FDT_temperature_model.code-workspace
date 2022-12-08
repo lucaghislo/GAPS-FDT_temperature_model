@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../GAPS-Fine-Threshold-DAQ-Converter"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"LEZION~1.C": "cpp"
+		},
+		"git.ignoreLimitWarning": true
+	}
+}
