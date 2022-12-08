@@ -11,8 +11,6 @@ def get_module_temperature(filepath):
     mean_code = np.mean(data_code.to_numpy())
 
     V_T = 0.9 * 1000 - (mean_code - 1024) * 1.72 / (3.87)
-    T = 30 + (5.506 - np.sqrt((-5.506) ** 2 + 4 * 0.00176 * (870.6 - V_T))) / (
-        2 * (-0.00176)
-    )
+    T = 30 + (5.506 - np.sqrt((-5.506) ** 2 + 4 * 0.00172 * (870.6 - V_T))) / (2 * (-0.00172))
 
     return [np.round(T, 1)]
