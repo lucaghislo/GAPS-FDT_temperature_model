@@ -12,15 +12,15 @@ from get_residual_metric import *
 
 # SCRIPT CONFIGURATION
 # Peaking time
-min_tau = 0  # Starting peaking time (min: 0)
-max_tau = 0  # Finishing peaking time (max: 7)
+min_tau = 5  # Starting peaking time (min: 0)
+max_tau = 5  # Finishing peaking time (max: 7)
 
 # Channels
-min_ch = 0  # Starting channel (min: 0)
-max_ch = 0  # Finishing channel (max: 31)
+min_ch = 4  # Starting channel (min: 0)
+max_ch = 4  # Finishing channel (max: 31)
 
 # Model selection
-n_params = 5  # Number of parameters (allowed: 5, 8, 9)
+n_params = 8  # Number of parameters (allowed: 5, 8, 9)
 
 # Maximum number of optimization steps
 n_iter = 300
@@ -29,8 +29,8 @@ n_iter = 300
 # input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\TransferFunction.dat"
 # input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\TransferFunction.dat"
 # input_fdt_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\TransferFunction.dat"
-input_fdt_path = r"C:\Users\ghisl\Documents\GitHub\GAPS-FDT_temperature_model\transfer_function_interpolation\input\raw_modules\MODULE_001\IT_L0R0M1_m25.8C\data\TransferFunction.dat"
-
+# input_fdt_path = r"C:\Users\ghisl\Documents\GitHub\GAPS-FDT_temperature_model\transfer_function_interpolation\input\raw_modules\MODULE_001\IT_L0R0M1_m25.8C\data\TransferFunction.dat"
+input_fdt_path = r"C:\Users\ghisl\Documents\GitHub\GAPS-FDT_temperature_model\transfer_function_interpolation\input\raw_modules\MODULE_400\IT_L4R0M0_Gigi_m27.2C\data\TransferFunction.dat"
 
 # Input temperature file path
 # input_temp_path = r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\HK_Temperature.dat"
@@ -43,7 +43,8 @@ input_temp_path = r""
 # input_pedestal_path = (r"transfer_function_interpolation\input\raw_modules\MODULE_496\1\data\Pedestals.dat")
 # input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Napoli\1\data\Pedestals.dat"
 # input_pedestal_path = r"transfer_function_interpolation\input\raw_modules\MODULE_Bergamo\data\Pedestals.dat"
-input_pedestal_path = r"C:\Users\ghisl\Documents\GitHub\GAPS-FDT_temperature_model\transfer_function_interpolation\input\raw_modules\MODULE_001\IT_L0R0M1_m25.8C\data\Pedestals.dat"
+# input_pedestal_path = r"C:\Users\ghisl\Documents\GitHub\GAPS-FDT_temperature_model\transfer_function_interpolation\input\raw_modules\MODULE_001\IT_L0R0M1_m25.8C\data\Pedestals.dat"
+input_pedestal_path = r"C:\Users\ghisl\Documents\GitHub\GAPS-FDT_temperature_model\transfer_function_interpolation\input\raw_modules\MODULE_400\IT_L4R0M0_Gigi_m27.2C\data\Pedestals.dat"
 
 # Output folder path
 main_output_path = "transfer_function_interpolation\output"
@@ -52,7 +53,7 @@ main_output_path = "transfer_function_interpolation\output"
 # output_folder_name = "all-ch_all-pts_short-fdt_MODULE_496_Tamb"
 # output_folder_name = "all-ch_all-pts_short-fdt_module_NAPOLI_-40C"
 # output_folder_name = "all-ch_all-pts_short-fdt_Module_Bergamo_-40C"
-output_folder_name = "SSL_Berkeley_Layer_0_Row_0_Module_1"
+output_folder_name = "SSL_Berkeley_Layer_4_Row_0_Module_0"
 
 if n_params == 5:
     fdt = t5.gaps_fdt_tanh_5_params

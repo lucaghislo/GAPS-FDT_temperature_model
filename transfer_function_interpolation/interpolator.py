@@ -29,6 +29,8 @@ coeff_ADU_mV = 1.76 * 10 ** (-3)
 # num_parameters: number of parameters to estimate (scalar)
 # folder_path: file path to main output folder
 # prefix: file name prefix for all files
+
+
 def interpolate_fdt(
     x_data,
     y_data,
@@ -44,6 +46,9 @@ def interpolate_fdt(
     pedestal=[],
 ):
 
+    x_data_raw = x_data
+    x_data = [xi for xi in x_data_raw]
+
     temp_flag = True
 
     # Check temperature
@@ -57,6 +62,8 @@ def interpolate_fdt(
     # Conversion ADU to V
     # x_data = [xi - pedestal for xi in x_data]
     x_data = [xi * coeff_ADU_mV for xi in x_data]
+
+    single_x = (480) * coeff_ADU_mV
 
     if len(weights_in) == 0:
         # Weigth definition (treated as **(-1))
@@ -97,6 +104,8 @@ def interpolate_fdt(
 
     # Estimate y given x using estimated coefficients
     ans = interpolating_function(x_data, *popt)
+
+    single_value = interpolating_function([single_x], *popt)
 
     # R2
     r_squared = r2_score(y_data, ans)
@@ -196,6 +205,8 @@ def interpolate_fdt(
     x_data = [xi / coeff_ADU_mV for xi in x_data]
     y_data = [yi / coeff_keV_fC for yi in y_data]
     ans = [ansi / coeff_keV_fC for ansi in ans]
+
+    print("Single value: " + str((single_value[0] / coeff_keV_fC) + 139.39))
 
     plt.clf()
     plt.plot(x_data, y_data, color="red", label="Data")

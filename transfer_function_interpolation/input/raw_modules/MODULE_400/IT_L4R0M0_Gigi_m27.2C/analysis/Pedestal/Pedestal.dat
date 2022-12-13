@@ -1,0 +1,353 @@
+CH 0:
+Tau 0: mean=140.115, sigma=18.48
+Tau 1: mean=139.468, sigma=8.34
+Tau 2: mean=139.427, sigma=5.35
+Tau 3: mean=139.034, sigma=3.90
+Tau 4: mean=139.221, sigma=3.43
+Tau 5: mean=139.243, sigma=2.91
+Tau 6: mean=138.966, sigma=2.70
+Tau 7: mean=138.96, sigma=2.61
+Channel 0: mean=139.30, sigma=5.97
+Number of error or empty events: 0
+CH 1:
+Tau 0: mean=125.304, sigma=21.90
+Tau 1: mean=124.46, sigma=9.79
+Tau 2: mean=124.389, sigma=6.17
+Tau 3: mean=124.062, sigma=4.67
+Tau 4: mean=124.237, sigma=3.99
+Tau 5: mean=123.941, sigma=3.44
+Tau 6: mean=123.718, sigma=3.23
+Tau 7: mean=123.921, sigma=3.49
+Channel 1: mean=124.25, sigma=7.09
+Number of error or empty events: 0
+CH 2:
+Tau 0: mean=152.588, sigma=25.27
+Tau 1: mean=152.186, sigma=10.98
+Tau 2: mean=151.821, sigma=6.66
+Tau 3: mean=151.625, sigma=4.99
+Tau 4: mean=151.78, sigma=4.19
+Tau 5: mean=151.571, sigma=3.41
+Tau 6: mean=151.72, sigma=3.31
+Tau 7: mean=151.398, sigma=3.29
+Channel 2: mean=151.84, sigma=7.76
+Number of error or empty events: 0
+CH 3:
+Tau 0: mean=139.433, sigma=25.15
+Tau 1: mean=139.193, sigma=10.99
+Tau 2: mean=138.782, sigma=6.65
+Tau 3: mean=138.639, sigma=5.00
+Tau 4: mean=138.733, sigma=4.25
+Tau 5: mean=138.741, sigma=3.41
+Tau 6: mean=138.596, sigma=3.14
+Tau 7: mean=138.775, sigma=3.09
+Channel 3: mean=138.86, sigma=7.71
+Number of error or empty events: 0
+CH 4:
+Tau 0: mean=140.208, sigma=26.95
+Tau 1: mean=140.23, sigma=11.77
+Tau 2: mean=139.676, sigma=7.28
+Tau 3: mean=139.499, sigma=5.45
+Tau 4: mean=139.697, sigma=4.71
+Tau 5: mean=139.339, sigma=3.96
+Tau 6: mean=139.32, sigma=3.42
+Tau 7: mean=139.415, sigma=3.28
+Channel 4: mean=139.67, sigma=8.35
+Number of error or empty events: 0
+CH 5:
+Tau 0: mean=138.998, sigma=26.63
+Tau 1: mean=138.49, sigma=11.66
+Tau 2: mean=138.223, sigma=6.95
+Tau 3: mean=138.232, sigma=5.25
+Tau 4: mean=138.435, sigma=4.25
+Tau 5: mean=138.374, sigma=3.51
+Tau 6: mean=138.156, sigma=3.30
+Tau 7: mean=138.113, sigma=3.20
+Channel 5: mean=138.38, sigma=8.09
+Number of error or empty events: 0
+CH 6:
+Tau 0: mean=123.731, sigma=25.97
+Tau 1: mean=123.078, sigma=11.56
+Tau 2: mean=122.947, sigma=7.28
+Tau 3: mean=122.562, sigma=5.37
+Tau 4: mean=122.534, sigma=4.66
+Tau 5: mean=122.753, sigma=3.85
+Tau 6: mean=122.345, sigma=3.59
+Tau 7: mean=122.441, sigma=3.62
+Channel 6: mean=122.80, sigma=8.24
+Number of error or empty events: 0
+CH 7:
+Tau 0: mean=123.063, sigma=26.91
+Tau 1: mean=122.077, sigma=12.24
+Tau 2: mean=121.806, sigma=7.49
+Tau 3: mean=121.567, sigma=5.40
+Tau 4: mean=121.913, sigma=4.70
+Tau 5: mean=121.688, sigma=3.81
+Tau 6: mean=121.737, sigma=3.47
+Tau 7: mean=121.659, sigma=3.41
+Channel 7: mean=121.94, sigma=8.43
+Number of error or empty events: 0
+CH 8:
+Tau 0: mean=140.477, sigma=25.53
+Tau 1: mean=139.992, sigma=11.18
+Tau 2: mean=140.069, sigma=6.94
+Tau 3: mean=139.674, sigma=5.08
+Tau 4: mean=140.027, sigma=4.41
+Tau 5: mean=139.589, sigma=3.58
+Tau 6: mean=140.082, sigma=3.25
+Tau 7: mean=140.189, sigma=3.21
+Channel 8: mean=140.01, sigma=7.90
+Number of error or empty events: 0
+CH 9:
+Tau 0: mean=116.269, sigma=24.02
+Tau 1: mean=115.391, sigma=10.71
+Tau 2: mean=115.076, sigma=6.90
+Tau 3: mean=114.952, sigma=5.05
+Tau 4: mean=115.488, sigma=4.33
+Tau 5: mean=115.197, sigma=3.64
+Tau 6: mean=115.561, sigma=3.37
+Tau 7: mean=115.348, sigma=3.49
+Channel 9: mean=115.41, sigma=7.69
+Number of error or empty events: 0
+CH 10:
+Tau 0: mean=106.732, sigma=22.76
+Tau 1: mean=105.582, sigma=10.06
+Tau 2: mean=105.592, sigma=6.14
+Tau 3: mean=105.267, sigma=4.63
+Tau 4: mean=105.456, sigma=3.98
+Tau 5: mean=105.373, sigma=3.49
+Tau 6: mean=105.764, sigma=3.26
+Tau 7: mean=105.867, sigma=3.24
+Channel 10: mean=105.70, sigma=7.20
+Number of error or empty events: 0
+CH 11:
+Tau 0: mean=165.483, sigma=24.95
+Tau 1: mean=165.072, sigma=10.99
+Tau 2: mean=164.917, sigma=7.05
+Tau 3: mean=164.782, sigma=5.22
+Tau 4: mean=164.76, sigma=4.29
+Tau 5: mean=164.863, sigma=3.70
+Tau 6: mean=165.023, sigma=3.40
+Tau 7: mean=164.873, sigma=3.47
+Channel 11: mean=164.97, sigma=7.88
+Number of error or empty events: 0
+CH 12:
+Tau 0: mean=120.836, sigma=23.70
+Tau 1: mean=120.085, sigma=10.49
+Tau 2: mean=119.944, sigma=6.50
+Tau 3: mean=119.485, sigma=4.97
+Tau 4: mean=120.118, sigma=4.41
+Tau 5: mean=119.698, sigma=3.64
+Tau 6: mean=119.968, sigma=3.61
+Tau 7: mean=120.055, sigma=3.39
+Channel 12: mean=120.02, sigma=7.59
+Number of error or empty events: 0
+CH 13:
+Tau 0: mean=123.626, sigma=24.42
+Tau 1: mean=122.864, sigma=10.70
+Tau 2: mean=122.665, sigma=6.85
+Tau 3: mean=122.303, sigma=5.28
+Tau 4: mean=122.516, sigma=4.55
+Tau 5: mean=122.546, sigma=3.86
+Tau 6: mean=122.799, sigma=3.50
+Tau 7: mean=122.779, sigma=3.62
+Channel 13: mean=122.76, sigma=7.85
+Number of error or empty events: 0
+CH 14:
+Tau 0: mean=143.374, sigma=25.57
+Tau 1: mean=143.163, sigma=11.14
+Tau 2: mean=142.75, sigma=7.20
+Tau 3: mean=142.61, sigma=5.19
+Tau 4: mean=142.662, sigma=4.40
+Tau 5: mean=142.922, sigma=3.51
+Tau 6: mean=143.246, sigma=3.24
+Tau 7: mean=143.017, sigma=3.34
+Channel 14: mean=142.97, sigma=7.95
+Number of error or empty events: 0
+CH 15:
+Tau 0: mean=135.785, sigma=29.58
+Tau 1: mean=135.454, sigma=13.71
+Tau 2: mean=135.181, sigma=8.98
+Tau 3: mean=135.139, sigma=6.65
+Tau 4: mean=135.489, sigma=5.41
+Tau 5: mean=135.465, sigma=4.32
+Tau 6: mean=135.807, sigma=3.64
+Tau 7: mean=135.749, sigma=3.52
+Channel 15: mean=135.51, sigma=9.48
+Number of error or empty events: 0
+CH 16:
+Tau 0: mean=175.05, sigma=26.97
+Tau 1: mean=174.972, sigma=12.84
+Tau 2: mean=174.583, sigma=8.25
+Tau 3: mean=174.381, sigma=6.29
+Tau 4: mean=174.742, sigma=11.90
+Tau 5: mean=174.478, sigma=4.02
+Tau 6: mean=174.702, sigma=3.45
+Tau 7: mean=174.683, sigma=3.31
+Channel 16: mean=174.70, sigma=9.63
+Number of error or empty events: 0
+CH 17:
+Tau 0: mean=196.166, sigma=25.22
+Tau 1: mean=196.101, sigma=11.47
+Tau 2: mean=195.313, sigma=7.16
+Tau 3: mean=195.126, sigma=5.57
+Tau 4: mean=195.528, sigma=4.71
+Tau 5: mean=195.199, sigma=3.57
+Tau 6: mean=195.17, sigma=3.03
+Tau 7: mean=195.313, sigma=2.85
+Channel 17: mean=195.49, sigma=7.95
+Number of error or empty events: 0
+CH 18:
+Tau 0: mean=170.893, sigma=25.85
+Tau 1: mean=170.779, sigma=12.00
+Tau 2: mean=170.423, sigma=7.63
+Tau 3: mean=170.085, sigma=5.91
+Tau 4: mean=170.23, sigma=4.92
+Tau 5: mean=170.083, sigma=3.79
+Tau 6: mean=170.316, sigma=3.12
+Tau 7: mean=170.06, sigma=2.96
+Channel 18: mean=170.36, sigma=8.27
+Number of error or empty events: 0
+CH 19:
+Tau 0: mean=154.359, sigma=26.72
+Tau 1: mean=153.82, sigma=12.84
+Tau 2: mean=153.577, sigma=8.23
+Tau 3: mean=153.251, sigma=6.15
+Tau 4: mean=153.72, sigma=5.02
+Tau 5: mean=152.969, sigma=4.09
+Tau 6: mean=153.215, sigma=3.39
+Tau 7: mean=153.213, sigma=2.94
+Channel 19: mean=153.52, sigma=8.67
+Number of error or empty events: 0
+CH 20:
+Tau 0: mean=159.221, sigma=24.82
+Tau 1: mean=158.995, sigma=11.59
+Tau 2: mean=158.727, sigma=7.53
+Tau 3: mean=158.159, sigma=5.93
+Tau 4: mean=158.557, sigma=4.89
+Tau 5: mean=158.195, sigma=4.10
+Tau 6: mean=158.248, sigma=3.23
+Tau 7: mean=158.38, sigma=3.10
+Channel 20: mean=158.56, sigma=8.15
+Number of error or empty events: 0
+CH 21:
+Tau 0: mean=116.26, sigma=23.85
+Tau 1: mean=115.321, sigma=11.55
+Tau 2: mean=115.195, sigma=7.65
+Tau 3: mean=114.736, sigma=5.80
+Tau 4: mean=114.752, sigma=4.71
+Tau 5: mean=114.398, sigma=3.84
+Tau 6: mean=114.587, sigma=3.18
+Tau 7: mean=114.575, sigma=2.74
+Channel 21: mean=114.98, sigma=7.92
+Number of error or empty events: 0
+CH 22:
+Tau 0: mean=187.711, sigma=26.51
+Tau 1: mean=187.464, sigma=12.69
+Tau 2: mean=187.067, sigma=8.37
+Tau 3: mean=186.584, sigma=6.35
+Tau 4: mean=186.879, sigma=5.21
+Tau 5: mean=186.638, sigma=3.86
+Tau 6: mean=186.706, sigma=3.18
+Tau 7: mean=186.903, sigma=3.01
+Channel 22: mean=186.99, sigma=8.65
+Number of error or empty events: 0
+CH 23:
+Tau 0: mean=146.638, sigma=28.32
+Tau 1: mean=146.497, sigma=13.48
+Tau 2: mean=145.743, sigma=8.73
+Tau 3: mean=145.548, sigma=6.62
+Tau 4: mean=145.909, sigma=5.36
+Tau 5: mean=145.541, sigma=4.17
+Tau 6: mean=145.706, sigma=3.62
+Tau 7: mean=145.637, sigma=3.31
+Channel 23: mean=145.90, sigma=9.20
+Number of error or empty events: 0
+CH 24:
+Tau 0: mean=124.117, sigma=24.31
+Tau 1: mean=123.426, sigma=11.54
+Tau 2: mean=123.095, sigma=7.43
+Tau 3: mean=122.737, sigma=5.45
+Tau 4: mean=123.031, sigma=4.57
+Tau 5: mean=122.767, sigma=3.51
+Tau 6: mean=122.547, sigma=2.91
+Tau 7: mean=122.368, sigma=2.55
+Channel 24: mean=123.01, sigma=7.78
+Number of error or empty events: 0
+CH 25:
+Tau 0: mean=119.706, sigma=25.39
+Tau 1: mean=118.739, sigma=11.53
+Tau 2: mean=118.342, sigma=7.37
+Tau 3: mean=118.207, sigma=5.29
+Tau 4: mean=118.554, sigma=4.60
+Tau 5: mean=118.159, sigma=3.48
+Tau 6: mean=118.024, sigma=2.94
+Tau 7: mean=118.221, sigma=2.61
+Channel 25: mean=118.49, sigma=7.90
+Number of error or empty events: 0
+CH 26:
+Tau 0: mean=149.334, sigma=25.18
+Tau 1: mean=148.72, sigma=11.18
+Tau 2: mean=148.6, sigma=6.78
+Tau 3: mean=148.284, sigma=4.88
+Tau 4: mean=148.547, sigma=4.04
+Tau 5: mean=148.489, sigma=3.24
+Tau 6: mean=148.376, sigma=2.81
+Tau 7: mean=148.487, sigma=2.52
+Channel 26: mean=148.60, sigma=7.58
+Number of error or empty events: 0
+CH 27:
+Tau 0: mean=164.56, sigma=24.42
+Tau 1: mean=164.218, sigma=10.67
+Tau 2: mean=163.924, sigma=6.40
+Tau 3: mean=163.753, sigma=4.86
+Tau 4: mean=163.92, sigma=3.98
+Tau 5: mean=163.813, sigma=3.20
+Tau 6: mean=163.584, sigma=2.96
+Tau 7: mean=163.723, sigma=2.53
+Channel 27: mean=163.94, sigma=7.38
+Number of error or empty events: 0
+CH 28:
+Tau 0: mean=161.537, sigma=22.59
+Tau 1: mean=161.107, sigma=9.88
+Tau 2: mean=160.952, sigma=6.14
+Tau 3: mean=160.598, sigma=4.58
+Tau 4: mean=161.036, sigma=4.03
+Tau 5: mean=160.618, sigma=3.17
+Tau 6: mean=160.409, sigma=2.78
+Tau 7: mean=160.698, sigma=2.56
+Channel 28: mean=160.87, sigma=6.97
+Number of error or empty events: 0
+CH 29:
+Tau 0: mean=166.145, sigma=22.22
+Tau 1: mean=166.01, sigma=9.77
+Tau 2: mean=165.649, sigma=6.01
+Tau 3: mean=165.521, sigma=4.49
+Tau 4: mean=165.63, sigma=3.80
+Tau 5: mean=165.719, sigma=3.04
+Tau 6: mean=165.565, sigma=2.73
+Tau 7: mean=165.425, sigma=2.59
+Channel 29: mean=165.71, sigma=6.83
+Number of error or empty events: 0
+CH 30:
+Tau 0: mean=163.91, sigma=21.24
+Tau 1: mean=163.725, sigma=9.59
+Tau 2: mean=163.615, sigma=6.15
+Tau 3: mean=163.249, sigma=4.72
+Tau 4: mean=163.839, sigma=3.84
+Tau 5: mean=163.248, sigma=2.98
+Tau 6: mean=163.499, sigma=2.64
+Tau 7: mean=163.297, sigma=2.54
+Channel 30: mean=163.55, sigma=6.71
+Number of error or empty events: 0
+CH 31:
+Tau 0: mean=142.544, sigma=20.81
+Tau 1: mean=141.932, sigma=10.20
+Tau 2: mean=141.932, sigma=6.89
+Tau 3: mean=141.626, sigma=5.08
+Tau 4: mean=141.938, sigma=4.16
+Tau 5: mean=141.505, sigma=3.49
+Tau 6: mean=141.756, sigma=2.97
+Tau 7: mean=141.695, sigma=2.73
+Channel 31: mean=141.87, sigma=7.04
+Number of error or empty events: 0
+Chip: mean=144.09, sigma=7.87
